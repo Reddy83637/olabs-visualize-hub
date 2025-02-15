@@ -6,47 +6,51 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 
-// Sample data - replace with real data from your API
-const data = [
-  { name: 'Jan', value: 400 },
-  { name: 'Feb', value: 300 },
-  { name: 'Mar', value: 600 },
-  { name: 'Apr', value: 800 },
-  { name: 'May', value: 500 },
-  { name: 'Jun', value: 700 },
+// Sample student data - replace with real data from your API
+const studentData = [
+  { month: 'Jan', physics: 85, chemistry: 78, biology: 92 },
+  { month: 'Feb', physics: 88, chemistry: 82, biology: 89 },
+  { month: 'Mar', physics: 92, chemistry: 85, biology: 94 },
+  { month: 'Apr', physics: 86, chemistry: 90, biology: 88 },
+  { month: 'May', physics: 89, chemistry: 88, biology: 91 },
+  { month: 'Jun', physics: 94, chemistry: 92, biology: 93 },
 ];
 
-const pieData = [
-  { name: 'Group A', value: 400 },
-  { name: 'Group B', value: 300 },
-  { name: 'Group C', value: 300 },
-  { name: 'Group D', value: 200 },
+const subjectDistribution = [
+  { name: 'Physics', students: 450 },
+  { name: 'Chemistry', students: 380 },
+  { name: 'Biology', students: 420 },
+];
+
+const performanceData = [
+  { grade: 'A', count: 120 },
+  { grade: 'B', count: 180 },
+  { grade: 'C', count: 80 },
+  { grade: 'D', count: 20 },
 ];
 
 const Admin = () => {
   const { toast } = useToast();
-  const [selectedMetric, setSelectedMetric] = useState("users");
+  const [selectedSubject, setSelectedSubject] = useState("physics");
 
-  // Simulated data fetching
   const { data: queryData, isLoading } = useQuery({
-    queryKey: ["adminData"],
+    queryKey: ["studentData"],
     queryFn: async () => {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      return data;
+      return studentData;
     },
   });
 
-  const handleMetricClick = (metric: string) => {
-    setSelectedMetric(metric);
+  const handleSubjectClick = (subject: string) => {
+    setSelectedSubject(subject);
     toast({
-      title: "Metric Updated",
-      description: `Now viewing ${metric} data`,
+      title: "Subject Updated",
+      description: `Now viewing ${subject} performance data`,
     });
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/30 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -54,33 +58,33 @@ const Admin = () => {
         className="max-w-7xl mx-auto"
       >
         <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-gray-800">Analytics Dashboard</h1>
-          <p className="text-gray-600 mt-2">Real-time data visualization and metrics</p>
+          <h1 className="text-3xl font-semibold text-gray-800">Student Analytics Dashboard</h1>
+          <p className="text-gray-600 mt-2">Track student performance and engagement across virtual labs</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {['users', 'revenue', 'orders', 'conversions'].map((metric) => (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {['physics', 'chemistry', 'biology'].map((subject) => (
             <motion.div
-              key={metric}
+              key={subject}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
               <Card 
                 className={`cursor-pointer transition-colors ${
-                  selectedMetric === metric ? 'border-blue-500 bg-blue-50/50' : ''
+                  selectedSubject === subject ? 'border-blue-500 bg-blue-50/50' : ''
                 }`}
-                onClick={() => handleMetricClick(metric)}
+                onClick={() => handleSubjectClick(subject)}
               >
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-gray-500 uppercase">
-                    {metric}
+                    {subject}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {metric === 'revenue' ? '$12,345' : '1,234'}
+                    {subject === selectedSubject ? '92%' : '85%'}
                   </div>
-                  <p className="text-green-600 text-sm mt-1">+12% from last month</p>
+                  <p className="text-green-600 text-sm mt-1">+5% from last month</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -90,23 +94,19 @@ const Admin = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card className="w-full">
             <CardHeader>
-              <CardTitle>Revenue Over Time</CardTitle>
+              <CardTitle>Subject Performance Trends</CardTitle>
             </CardHeader>
             <CardContent className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data}>
+                <LineChart data={studentData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
+                  <XAxis dataKey="month" />
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line 
-                    type="monotone" 
-                    dataKey="value" 
-                    stroke="#6366f1" 
-                    strokeWidth={2}
-                    dot={{ strokeWidth: 2 }}
-                  />
+                  <Line type="monotone" dataKey="physics" stroke="#3b82f6" strokeWidth={2} />
+                  <Line type="monotone" dataKey="chemistry" stroke="#10b981" strokeWidth={2} />
+                  <Line type="monotone" dataKey="biology" stroke="#8b5cf6" strokeWidth={2} />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
@@ -114,19 +114,19 @@ const Admin = () => {
 
           <Card className="w-full">
             <CardHeader>
-              <CardTitle>User Distribution</CardTitle>
+              <CardTitle>Subject Distribution</CardTitle>
             </CardHeader>
             <CardContent className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={pieData}
+                    data={subjectDistribution}
                     cx="50%"
                     cy="50%"
                     innerRadius={60}
                     outerRadius={80}
-                    fill="#6366f1"
-                    dataKey="value"
+                    fill="#3b82f6"
+                    dataKey="students"
                     label
                   />
                   <Tooltip />
@@ -138,17 +138,17 @@ const Admin = () => {
 
           <Card className="w-full">
             <CardHeader>
-              <CardTitle>Monthly Growth</CardTitle>
+              <CardTitle>Grade Distribution</CardTitle>
             </CardHeader>
             <CardContent className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data}>
+                <BarChart data={performanceData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
+                  <XAxis dataKey="grade" />
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="value" fill="#6366f1" />
+                  <Bar dataKey="count" fill="#3b82f6" />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -156,21 +156,38 @@ const Admin = () => {
 
           <Card className="w-full">
             <CardHeader>
-              <CardTitle>Trend Analysis</CardTitle>
+              <CardTitle>Monthly Engagement</CardTitle>
             </CardHeader>
             <CardContent className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={data}>
+                <AreaChart data={studentData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
+                  <XAxis dataKey="month" />
                   <YAxis />
                   <Tooltip />
                   <Legend />
                   <Area 
                     type="monotone" 
-                    dataKey="value" 
-                    stroke="#6366f1"
-                    fill="#6366f1"
+                    dataKey="physics" 
+                    stackId="1"
+                    stroke="#3b82f6"
+                    fill="#3b82f6"
+                    fillOpacity={0.2}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="chemistry" 
+                    stackId="1"
+                    stroke="#10b981"
+                    fill="#10b981"
+                    fillOpacity={0.2}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="biology" 
+                    stackId="1"
+                    stroke="#8b5cf6"
+                    fill="#8b5cf6"
                     fillOpacity={0.2}
                   />
                 </AreaChart>
