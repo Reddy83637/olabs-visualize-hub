@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
@@ -6,8 +5,10 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Sample student data - replace with real data from your API
 const studentData = [
   { month: 'Jan', physics: 85, chemistry: 78, biology: 92 },
   { month: 'Feb', physics: 88, chemistry: 82, biology: 89 },
@@ -17,12 +18,24 @@ const studentData = [
   { month: 'Jun', physics: 94, chemistry: 92, biology: 93 },
 ];
 
-const students = [
-  { id: 1, name: "John Doe", grade: "10th", section: "A" },
-  { id: 2, name: "Jane Smith", grade: "10th", section: "B" },
-  { id: 3, name: "Mike Johnson", grade: "11th", section: "A" },
-  { id: 4, name: "Sarah Williams", grade: "11th", section: "B" },
-];
+const students = {
+  "9": [
+    { id: 1, name: "Alex Johnson", grade: "9th", section: "A" },
+    { id: 2, name: "Emily Brown", grade: "9th", section: "B" },
+  ],
+  "10": [
+    { id: 3, name: "John Doe", grade: "10th", section: "A" },
+    { id: 4, name: "Jane Smith", grade: "10th", section: "B" },
+  ],
+  "11": [
+    { id: 5, name: "Mike Johnson", grade: "11th", section: "A" },
+    { id: 6, name: "Sarah Williams", grade: "11th", section: "B" },
+  ],
+  "12": [
+    { id: 7, name: "Tom Wilson", grade: "12th", section: "A" },
+    { id: 8, name: "Lisa Anderson", grade: "12th", section: "B" },
+  ],
+};
 
 const studentDetails = {
   1: {
@@ -38,12 +51,13 @@ const studentDetails = {
       { date: "2024-02-05", experiment: "Acid Base Titration", score: 88 },
       { date: "2024-02-10", experiment: "Photosynthesis", score: 92 }
     ]
-  }
-  // ... Add more student details as needed
+  },
+  // Add similar data for other student IDs
 };
 
 const Admin = () => {
   const { toast } = useToast();
+  const [selectedGrade, setSelectedGrade] = useState("9");
   const [selectedSubject, setSelectedSubject] = useState("physics");
   const [selectedStudent, setSelectedStudent] = useState<string>("1");
 
@@ -67,7 +81,15 @@ const Admin = () => {
     setSelectedStudent(value);
     toast({
       title: "Student Selected",
-      description: `Viewing ${students.find(s => s.id.toString() === value)?.name}'s analysis`,
+      description: `Viewing ${students[selectedGrade as keyof typeof students].find(s => s.id.toString() === value)?.name}'s analysis`,
+    });
+  };
+
+  const handleDownloadReport = () => {
+    // In a real application, this would generate and download a PDF report
+    toast({
+      title: "Downloading Report",
+      description: "Student performance report is being generated",
     });
   };
 
@@ -81,25 +103,51 @@ const Admin = () => {
         transition={{ duration: 0.5 }}
         className="max-w-7xl mx-auto"
       >
-        <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-gray-800">Student Analytics Dashboard</h1>
-          <p className="text-gray-600 mt-2">Track individual student performance and engagement</p>
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-semibold text-gray-800">Student Analytics Dashboard</h1>
+            <p className="text-gray-600 mt-2">Track individual student performance and engagement</p>
+          </div>
+          <Button
+            onClick={handleDownloadReport}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Download Report
+          </Button>
         </div>
 
-        <div className="mb-8">
-          <Select value={selectedStudent} onValueChange={handleStudentChange}>
-            <SelectTrigger className="w-[280px]">
-              <SelectValue placeholder="Select a student" />
-            </SelectTrigger>
-            <SelectContent>
-              {students.map((student) => (
-                <SelectItem key={student.id} value={student.id.toString()}>
-                  {student.name} - Grade {student.grade}, Section {student.section}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <Tabs defaultValue="9" value={selectedGrade} onValueChange={setSelectedGrade} className="mb-8">
+          <TabsList className="grid grid-cols-4 w-[400px]">
+            <TabsTrigger value="9">Grade 9</TabsTrigger>
+            <TabsTrigger value="10">Grade 10</TabsTrigger>
+            <TabsTrigger value="11">Grade 11</TabsTrigger>
+            <TabsTrigger value="12">Grade 12</TabsTrigger>
+          </TabsList>
+          {Object.entries(students).map(([grade, gradeStudents]) => (
+            <TabsContent key={grade} value={grade}>
+              <Card className="mb-8">
+                <CardHeader>
+                  <CardTitle>Grade {grade} Students</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Select value={selectedStudent} onValueChange={handleStudentChange}>
+                    <SelectTrigger className="w-[280px]">
+                      <SelectValue placeholder="Select a student" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {gradeStudents.map((student) => (
+                        <SelectItem key={student.id} value={student.id.toString()}>
+                          {student.name} - Section {student.section}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          ))}
+        </Tabs>
 
         {currentStudent && (
           <>
