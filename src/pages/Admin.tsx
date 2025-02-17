@@ -108,81 +108,84 @@ const Admin = () => {
     const pdf = new jsPDF();
     const student = students[selectedGrade as keyof typeof students].find(s => s.id.toString() === selectedStudent);
 
-    // Add background color
+    // Add gradient-like background
     pdf.setFillColor(240, 248, 255); // Light blue background
     pdf.rect(0, 0, pdf.internal.pageSize.width, pdf.internal.pageSize.height, 'F');
 
-    // Header with school logo/name
-    pdf.setFillColor(51, 122, 183);
-    pdf.rect(0, 0, pdf.internal.pageSize.width, 40, 'F');
+    // Header with gradient-like effect
+    pdf.setFillColor(139, 87, 246); // Purple color matching webpage
+    pdf.rect(0, 0, pdf.internal.pageSize.width, 45, 'F');
     
+    // Add a subtle shadow effect
+    pdf.setFillColor(129, 77, 236);
+    pdf.rect(0, 43, pdf.internal.pageSize.width, 2, 'F');
+
+    // Header text
     pdf.setTextColor(255, 255, 255);
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(24);
-    pdf.text('Student Performance Report', pdf.internal.pageSize.width / 2, 25, { align: 'center' });
+    pdf.text('Student Analytics Dashboard', pdf.internal.pageSize.width / 2, 25, { align: 'center' });
+    pdf.setFontSize(14);
+    pdf.text('Track individual student performance and engagement', pdf.internal.pageSize.width / 2, 35, { align: 'center' });
 
-    // Student Information Section
-    pdf.setTextColor(44, 62, 80);
-    pdf.setFontSize(16);
+    // Student Card Section
+    let yPos = 60;
+    
+    // Card-like container
+    pdf.setFillColor(255, 255, 255);
+    pdf.setDrawColor(229, 231, 235);
+    pdf.roundedRect(15, yPos - 10, 180, 50, 3, 3, 'FD');
+
+    // Student Information
+    pdf.setTextColor(31, 41, 55);
     pdf.setFont("helvetica", "bold");
-    pdf.text('Student Information', 20, 50);
+    pdf.setFontSize(16);
+    pdf.text('Student Information', 20, yPos);
 
-    // Add decorative line
-    pdf.setDrawColor(51, 122, 183);
-    pdf.setLineWidth(0.5);
-    pdf.line(20, 55, 190, 55);
-
-    // Student details in a more organized layout
+    // Student details with modern layout
     pdf.setFontSize(12);
     pdf.setFont("helvetica", "normal");
-    const studentInfo = [
-      [`Name: ${student?.name}`, `Grade: ${student?.grade}`],
-      [`Section: ${student?.section}`, `Overall Grade: ${currentStudentData.overallGrade}`],
-      [`Attendance: ${currentStudentData.attendance}%`, `Academic Year: 2023-2024`]
-    ];
+    pdf.text(`Name: ${student?.name}`, 25, yPos + 15);
+    pdf.text(`Grade: ${student?.grade} | Section: ${student?.section}`, 25, yPos + 25);
 
-    let yPos = 65;
-    studentInfo.forEach(row => {
-      pdf.text(row[0], 25, yPos);
-      pdf.text(row[1], 120, yPos);
-      yPos += 10;
-    });
-
-    // Subject Performance Section
-    yPos += 15;
+    // Subject Cards Section
+    yPos += 70;
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(16);
     pdf.text('Subject Performance', 20, yPos);
-    pdf.line(20, yPos + 5, 190, yPos + 5);
 
-    // Create a table-like structure for subject performance
-    pdf.setFontSize(11);
-    yPos += 15;
+    // Create modern cards for each subject
     Object.entries(currentStudentData.subjects).forEach(([subject, data], index) => {
-      // Alternate row colors
-      pdf.setFillColor(index % 2 === 0 ? 245 : 255, 245, 245);
-      pdf.rect(20, yPos - 5, 170, 10, 'F');
+      const cardX = 20 + (index * 62);
+      pdf.setFillColor(255, 255, 255);
+      pdf.roundedRect(cardX, yPos + 10, 55, 70, 3, 3, 'FD');
       
-      // Subject details
+      // Subject title
       pdf.setFont("helvetica", "bold");
-      pdf.text(subject.charAt(0).toUpperCase() + subject.slice(1), 25, yPos);
+      pdf.setFontSize(12);
+      pdf.setTextColor(31, 41, 55);
+      pdf.text(subject.charAt(0).toUpperCase() + subject.slice(1), cardX + 5, yPos + 25);
+      
+      // Grade
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(16);
+      pdf.text(data.grade, cardX + 5, yPos + 40);
+      
+      // Progress
       pdf.setFont("helvetica", "normal");
-      pdf.text(`Grade: ${data.grade}`, 80, yPos);
-      pdf.text(`Progress: ${data.progress}%`, 120, yPos);
-      pdf.text(`Experiments: ${data.experiments}`, 160, yPos);
-      yPos += 10;
+      pdf.setFontSize(10);
+      pdf.text(`Progress: ${data.progress}%`, cardX + 5, yPos + 55);
+      pdf.text(`Exp: ${data.experiments}`, cardX + 5, yPos + 65);
     });
 
     // Charts Section
-    yPos += 10;
+    yPos += 100;
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(16);
     pdf.text('Performance Analytics', 20, yPos);
-    pdf.line(20, yPos + 5, 190, yPos + 5);
-    yPos += 15;
 
-    // Add charts with better positioning and sizes
-    Object.entries(chartRefs).forEach(([chartName, ref]) => {
+    // Add charts in a grid layout
+    Object.entries(chartRefs).forEach(([chartName, ref], index) => {
       if (ref.current) {
         const chartElement = ref.current as HTMLElement;
         if (chartElement) {
@@ -200,45 +203,57 @@ const Admin = () => {
             ctx.drawImage(img, 0, 0);
             const imgData = canvas.toDataURL('image/png');
             
-            // Add chart title
-            pdf.setFont("helvetica", "bold");
-            pdf.setFontSize(14);
-            pdf.text(chartName.charAt(0).toUpperCase() + chartName.slice(1), 20, yPos - 5);
+            // Create card-like container for chart
+            const chartY = yPos + 10 + (Math.floor(index / 2) * 100);
+            const chartX = 20 + ((index % 2) * 95);
             
-            // Add chart with border
-            pdf.setDrawColor(200, 200, 200);
-            pdf.rect(20, yPos, 170, 80);
-            pdf.addImage(imgData, 'PNG', 20, yPos, 170, 80);
-            yPos += 90;
+            pdf.setFillColor(255, 255, 255);
+            pdf.roundedRect(chartX - 5, chartY - 5, 90, 90, 3, 3, 'FD');
+            
+            // Chart title
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(11);
+            pdf.text(chartName.charAt(0).toUpperCase() + chartName.slice(1), chartX, chartY - 2);
+            
+            // Add chart
+            pdf.addImage(imgData, 'PNG', chartX, chartY, 80, 80);
             URL.revokeObjectURL(url);
 
             if (chartName === 'progress') {
               // Recent Activity Section
-              yPos += 10;
+              yPos = chartY + 100;
               pdf.setFont("helvetica", "bold");
               pdf.setFontSize(16);
               pdf.text('Recent Activity', 20, yPos);
-              pdf.line(20, yPos + 5, 190, yPos + 5);
-              yPos += 15;
 
-              // Add recent activities in a table-like format
-              currentStudentData.recentActivity.forEach((activity, index) => {
-                pdf.setFillColor(index % 2 === 0 ? 245 : 255, 245, 245);
-                pdf.rect(20, yPos - 5, 170, 10, 'F');
+              // Activity cards
+              currentStudentData.recentActivity.forEach((activity, idx) => {
+                const activityY = yPos + 15 + (idx * 25);
                 
+                // Card background
+                pdf.setFillColor(255, 255, 255);
+                pdf.roundedRect(20, activityY - 5, 170, 20, 3, 3, 'FD');
+                
+                // Activity details
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(11);
-                pdf.text(activity.date, 25, yPos);
-                pdf.text(activity.experiment, 80, yPos);
-                pdf.text(`${activity.score}%`, 170, yPos);
-                yPos += 10;
+                pdf.text(activity.date, 25, activityY + 5);
+                pdf.text(activity.experiment, 80, activityY + 5);
+                
+                // Score with color indicator
+                pdf.setFont("helvetica", "bold");
+                pdf.setTextColor(activity.score >= 90 ? 34 : activity.score >= 75 ? 146 : 239, 
+                               activity.score >= 90 ? 197 : activity.score >= 75 ? 146 : 68,
+                               activity.score >= 90 ? 94 : activity.score >= 75 ? 0 : 68);
+                pdf.text(`${activity.score}%`, 170, activityY + 5);
+                pdf.setTextColor(31, 41, 55);
               });
 
               // Footer
               pdf.setFont("helvetica", "italic");
               pdf.setFontSize(10);
-              pdf.setTextColor(128, 128, 128);
-              pdf.text('Generated on: ' + new Date().toLocaleDateString(), 20, pdf.internal.pageSize.height - 10);
+              pdf.setTextColor(107, 114, 128);
+              pdf.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, pdf.internal.pageSize.height - 10);
 
               pdf.save(`${student?.name}_performance_report.pdf`);
 
