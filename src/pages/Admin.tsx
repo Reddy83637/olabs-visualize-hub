@@ -135,10 +135,10 @@ const Admin = () => {
           const svgData = new XMLSerializer().serializeToString(chartElement.querySelector('svg')!);
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d')!;
-          const DOMURL = window.URL || window.webkitURL || window;
+          
           const img = new Image();
           const svg = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-          const url = DOMURL.createObjectURL(svg);
+          const url = URL.createObjectURL(svg);
 
           img.onload = function() {
             canvas.width = img.width;
@@ -147,9 +147,10 @@ const Admin = () => {
             const imgData = canvas.toDataURL('image/png');
             pdf.addImage(imgData, 'PNG', 20, yPos, 170, 80);
             yPos += 90;
-            DOMURL.revokeObjectURL(url);
+            URL.revokeObjectURL(url);
 
             if (chartName === 'progress') {
+              yPos += 10;
               pdf.text('Recent Activity:', 20, yPos);
               yPos += 10;
               currentStudentData.recentActivity.forEach(activity => {
