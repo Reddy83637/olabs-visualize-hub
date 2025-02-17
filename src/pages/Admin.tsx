@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
+import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, RadarChart, Radar, RadarGrid, PolarGrid, PolarAngleAxis, PolarRadiusAxis, RadialBarChart, RadialBar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import jsPDF from 'jspdf';
 
 const studentData = [
   { month: 'Jan', physics: 85, chemistry: 78, biology: 92 },
@@ -52,8 +53,16 @@ const studentDetails = {
       { date: "2024-02-10", experiment: "Photosynthesis", score: 92 }
     ]
   },
-  // Add similar data for other student IDs
 };
+
+const skillsData = [
+  { subject: 'Problem Solving', A: 120, B: 110, fullMark: 150 },
+  { subject: 'Lab Work', A: 98, B: 130, fullMark: 150 },
+  { subject: 'Theory', A: 86, B: 130, fullMark: 150 },
+  { subject: 'Projects', A: 99, B: 100, fullMark: 150 },
+  { subject: 'Attendance', A: 85, B: 90, fullMark: 150 },
+  { subject: 'Participation', A: 65, B: 85, fullMark: 150 },
+];
 
 const Admin = () => {
   const { toast } = useToast();
@@ -86,10 +95,41 @@ const Admin = () => {
   };
 
   const handleDownloadReport = () => {
-    // In a real application, this would generate and download a PDF report
+    const currentStudentData = studentDetails[Number(selectedStudent) as keyof typeof studentDetails];
+    if (!currentStudentData) return;
+
+    const pdf = new jsPDF();
+    const student = students[selectedGrade as keyof typeof students].find(s => s.id.toString() === selectedStudent);
+
+    pdf.setFontSize(20);
+    pdf.text('Student Performance Report', 20, 20);
+    
+    pdf.setFontSize(12);
+    pdf.text(`Name: ${student?.name}`, 20, 40);
+    pdf.text(`Grade: ${student?.grade}`, 20, 50);
+    pdf.text(`Section: ${student?.section}`, 20, 60);
+    pdf.text(`Overall Grade: ${currentStudentData.overallGrade}`, 20, 70);
+    pdf.text(`Attendance: ${currentStudentData.attendance}%`, 20, 80);
+
+    pdf.text('Subject Performance:', 20, 100);
+    let yPos = 110;
+    Object.entries(currentStudentData.subjects).forEach(([subject, data]) => {
+      pdf.text(`${subject}: Grade ${data.grade} (Progress: ${data.progress}%, Experiments: ${data.experiments})`, 20, yPos);
+      yPos += 10;
+    });
+
+    pdf.text('Recent Activity:', 20, yPos + 20);
+    yPos += 30;
+    currentStudentData.recentActivity.forEach(activity => {
+      pdf.text(`${activity.date} - ${activity.experiment}: ${activity.score}%`, 20, yPos);
+      yPos += 10;
+    });
+
+    pdf.save(`${student?.name}_report.pdf`);
+
     toast({
-      title: "Downloading Report",
-      description: "Student performance report is being generated",
+      title: "Report Downloaded",
+      description: `Performance report for ${student?.name} has been generated`,
     });
   };
 
@@ -249,6 +289,44 @@ const Admin = () => {
                         fillOpacity={0.2}
                       />
                     </AreaChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              <Card className="w-full">
+                <CardHeader>
+                  <CardTitle>Skills Assessment</CardTitle>
+                </CardHeader>
+                <CardContent className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RadarChart outerRadius={90} data={skillsData}>
+                      <PolarGrid />
+                      <PolarAngleAxis dataKey="subject" />
+                      <PolarRadiusAxis />
+                      <Radar name="Current" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+                      <Radar name="Target" dataKey="B" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.6} />
+                      <Legend />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              <Card className="w-full">
+                <CardHeader>
+                  <CardTitle>Subject-wise Progress</CardTitle>
+                </CardHeader>
+                <CardContent className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={studentData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="physics" fill="#3b82f6" />
+                      <Bar dataKey="chemistry" fill="#10b981" />
+                      <Bar dataKey="biology" fill="#8b5cf6" />
+                    </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
