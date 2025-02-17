@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, RadialBarChart, RadialBar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { motion } from "framer-motion";
@@ -70,6 +69,12 @@ const Admin = () => {
   const [selectedGrade, setSelectedGrade] = useState("9");
   const [selectedSubject, setSelectedSubject] = useState("physics");
   const [selectedStudent, setSelectedStudent] = useState<string>("1");
+  const chartRefs = {
+    performance: useRef(null),
+    engagement: useRef(null),
+    skills: useRef(null),
+    progress: useRef(null)
+  };
 
   const { data: queryData, isLoading } = useQuery({
     queryKey: ["studentData"],
@@ -119,18 +124,50 @@ const Admin = () => {
       yPos += 10;
     });
 
-    pdf.text('Recent Activity:', 20, yPos + 20);
-    yPos += 30;
-    currentStudentData.recentActivity.forEach(activity => {
-      pdf.text(`${activity.date} - ${activity.experiment}: ${activity.score}%`, 20, yPos);
-      yPos += 10;
-    });
+    yPos += 20;
+    pdf.text('Performance Analytics:', 20, yPos);
+    yPos += 10;
 
-    pdf.save(`${student?.name}_report.pdf`);
+    Object.entries(chartRefs).forEach(([chartName, ref]) => {
+      if (ref.current) {
+        const chartElement = ref.current as HTMLElement;
+        if (chartElement) {
+          const svgData = new XMLSerializer().serializeToString(chartElement.querySelector('svg')!);
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d')!;
+          const DOMURL = window.URL || window.webkitURL || window;
+          const img = new Image();
+          const svg = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+          const url = DOMURL.createObjectURL(svg);
 
-    toast({
-      title: "Report Downloaded",
-      description: `Performance report for ${student?.name} has been generated`,
+          img.onload = function() {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+            const imgData = canvas.toDataURL('image/png');
+            pdf.addImage(imgData, 'PNG', 20, yPos, 170, 80);
+            yPos += 90;
+            DOMURL.revokeObjectURL(url);
+
+            if (chartName === 'progress') {
+              pdf.text('Recent Activity:', 20, yPos);
+              yPos += 10;
+              currentStudentData.recentActivity.forEach(activity => {
+                pdf.text(`${activity.date} - ${activity.experiment}: ${activity.score}%`, 20, yPos);
+                yPos += 10;
+              });
+
+              pdf.save(`${student?.name}_report.pdf`);
+
+              toast({
+                title: "Report Downloaded",
+                description: `Enhanced performance report for ${student?.name} has been generated`,
+              });
+            }
+          };
+          img.src = url;
+        }
+      }
     });
   };
 
@@ -254,7 +291,7 @@ const Admin = () => {
                 <CardHeader>
                   <CardTitle>Subject Performance Trends</CardTitle>
                 </CardHeader>
-                <CardContent className="h-[300px]">
+                <CardContent className="h-[300px]" ref={chartRefs.performance}>
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={studentData}>
                       <CartesianGrid strokeDasharray="3 3" />
@@ -274,7 +311,7 @@ const Admin = () => {
                 <CardHeader>
                   <CardTitle>Monthly Engagement</CardTitle>
                 </CardHeader>
-                <CardContent className="h-[300px]">
+                <CardContent className="h-[300px]" ref={chartRefs.engagement}>
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={studentData}>
                       <CartesianGrid strokeDasharray="3 3" />
@@ -298,7 +335,7 @@ const Admin = () => {
                 <CardHeader>
                   <CardTitle>Skills Assessment</CardTitle>
                 </CardHeader>
-                <CardContent className="h-[300px]">
+                <CardContent className="h-[300px]" ref={chartRefs.skills}>
                   <ResponsiveContainer width="100%" height="100%">
                     <RadarChart outerRadius={90} data={skillsData}>
                       <PolarGrid />
@@ -316,7 +353,7 @@ const Admin = () => {
                 <CardHeader>
                   <CardTitle>Subject-wise Progress</CardTitle>
                 </CardHeader>
-                <CardContent className="h-[300px]">
+                <CardContent className="h-[300px]" ref={chartRefs.progress}>
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={studentData}>
                       <CartesianGrid strokeDasharray="3 3" />
