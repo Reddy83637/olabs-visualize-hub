@@ -1,3 +1,4 @@
+
 import { useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, RadialBarChart, RadialBar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
@@ -107,27 +108,80 @@ const Admin = () => {
     const pdf = new jsPDF();
     const student = students[selectedGrade as keyof typeof students].find(s => s.id.toString() === selectedStudent);
 
-    pdf.setFontSize(20);
-    pdf.text('Student Performance Report', 20, 20);
-    
-    pdf.setFontSize(12);
-    pdf.text(`Name: ${student?.name}`, 20, 40);
-    pdf.text(`Grade: ${student?.grade}`, 20, 50);
-    pdf.text(`Section: ${student?.section}`, 20, 60);
-    pdf.text(`Overall Grade: ${currentStudentData.overallGrade}`, 20, 70);
-    pdf.text(`Attendance: ${currentStudentData.attendance}%`, 20, 80);
+    // Add background color
+    pdf.setFillColor(240, 248, 255); // Light blue background
+    pdf.rect(0, 0, pdf.internal.pageSize.width, pdf.internal.pageSize.height, 'F');
 
-    pdf.text('Subject Performance:', 20, 100);
-    let yPos = 110;
-    Object.entries(currentStudentData.subjects).forEach(([subject, data]) => {
-      pdf.text(`${subject}: Grade ${data.grade} (Progress: ${data.progress}%, Experiments: ${data.experiments})`, 20, yPos);
+    // Header with school logo/name
+    pdf.setFillColor(51, 122, 183);
+    pdf.rect(0, 0, pdf.internal.pageSize.width, 40, 'F');
+    
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(24);
+    pdf.text('Student Performance Report', pdf.internal.pageSize.width / 2, 25, { align: 'center' });
+
+    // Student Information Section
+    pdf.setTextColor(44, 62, 80);
+    pdf.setFontSize(16);
+    pdf.setFont("helvetica", "bold");
+    pdf.text('Student Information', 20, 50);
+
+    // Add decorative line
+    pdf.setDrawColor(51, 122, 183);
+    pdf.setLineWidth(0.5);
+    pdf.line(20, 55, 190, 55);
+
+    // Student details in a more organized layout
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "normal");
+    const studentInfo = [
+      [`Name: ${student?.name}`, `Grade: ${student?.grade}`],
+      [`Section: ${student?.section}`, `Overall Grade: ${currentStudentData.overallGrade}`],
+      [`Attendance: ${currentStudentData.attendance}%`, `Academic Year: 2023-2024`]
+    ];
+
+    let yPos = 65;
+    studentInfo.forEach(row => {
+      pdf.text(row[0], 25, yPos);
+      pdf.text(row[1], 120, yPos);
       yPos += 10;
     });
 
-    yPos += 20;
-    pdf.text('Performance Analytics:', 20, yPos);
-    yPos += 10;
+    // Subject Performance Section
+    yPos += 15;
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(16);
+    pdf.text('Subject Performance', 20, yPos);
+    pdf.line(20, yPos + 5, 190, yPos + 5);
 
+    // Create a table-like structure for subject performance
+    pdf.setFontSize(11);
+    yPos += 15;
+    Object.entries(currentStudentData.subjects).forEach(([subject, data], index) => {
+      // Alternate row colors
+      pdf.setFillColor(index % 2 === 0 ? 245 : 255, 245, 245);
+      pdf.rect(20, yPos - 5, 170, 10, 'F');
+      
+      // Subject details
+      pdf.setFont("helvetica", "bold");
+      pdf.text(subject.charAt(0).toUpperCase() + subject.slice(1), 25, yPos);
+      pdf.setFont("helvetica", "normal");
+      pdf.text(`Grade: ${data.grade}`, 80, yPos);
+      pdf.text(`Progress: ${data.progress}%`, 120, yPos);
+      pdf.text(`Experiments: ${data.experiments}`, 160, yPos);
+      yPos += 10;
+    });
+
+    // Charts Section
+    yPos += 10;
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(16);
+    pdf.text('Performance Analytics', 20, yPos);
+    pdf.line(20, yPos + 5, 190, yPos + 5);
+    yPos += 15;
+
+    // Add charts with better positioning and sizes
     Object.entries(chartRefs).forEach(([chartName, ref]) => {
       if (ref.current) {
         const chartElement = ref.current as HTMLElement;
@@ -145,20 +199,48 @@ const Admin = () => {
             canvas.height = img.height;
             ctx.drawImage(img, 0, 0);
             const imgData = canvas.toDataURL('image/png');
+            
+            // Add chart title
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(14);
+            pdf.text(chartName.charAt(0).toUpperCase() + chartName.slice(1), 20, yPos - 5);
+            
+            // Add chart with border
+            pdf.setDrawColor(200, 200, 200);
+            pdf.rect(20, yPos, 170, 80);
             pdf.addImage(imgData, 'PNG', 20, yPos, 170, 80);
             yPos += 90;
             URL.revokeObjectURL(url);
 
             if (chartName === 'progress') {
+              // Recent Activity Section
               yPos += 10;
-              pdf.text('Recent Activity:', 20, yPos);
-              yPos += 10;
-              currentStudentData.recentActivity.forEach(activity => {
-                pdf.text(`${activity.date} - ${activity.experiment}: ${activity.score}%`, 20, yPos);
+              pdf.setFont("helvetica", "bold");
+              pdf.setFontSize(16);
+              pdf.text('Recent Activity', 20, yPos);
+              pdf.line(20, yPos + 5, 190, yPos + 5);
+              yPos += 15;
+
+              // Add recent activities in a table-like format
+              currentStudentData.recentActivity.forEach((activity, index) => {
+                pdf.setFillColor(index % 2 === 0 ? 245 : 255, 245, 245);
+                pdf.rect(20, yPos - 5, 170, 10, 'F');
+                
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(11);
+                pdf.text(activity.date, 25, yPos);
+                pdf.text(activity.experiment, 80, yPos);
+                pdf.text(`${activity.score}%`, 170, yPos);
                 yPos += 10;
               });
 
-              pdf.save(`${student?.name}_report.pdf`);
+              // Footer
+              pdf.setFont("helvetica", "italic");
+              pdf.setFontSize(10);
+              pdf.setTextColor(128, 128, 128);
+              pdf.text('Generated on: ' + new Date().toLocaleDateString(), 20, pdf.internal.pageSize.height - 10);
+
+              pdf.save(`${student?.name}_performance_report.pdf`);
 
               toast({
                 title: "Report Downloaded",
