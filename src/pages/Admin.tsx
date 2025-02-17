@@ -272,29 +272,42 @@ const Admin = () => {
   const currentStudent = studentDetails[Number(selectedStudent) as keyof typeof studentDetails];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-8">
+    <div 
+      className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-8"
+      style={{
+        backgroundImage: `
+          linear-gradient(to right bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8)), 
+          url('/placeholder.svg')
+        `,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="max-w-7xl mx-auto"
+        className="max-w-7xl mx-auto space-y-8"
       >
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-semibold text-gray-800">Student Analytics Dashboard</h1>
-            <p className="text-gray-600 mt-2">Track individual student performance and engagement</p>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              Student Analytics Dashboard
+            </h1>
+            <p className="text-gray-600 mt-2 text-lg">Track individual student performance and engagement</p>
           </div>
           <Button
             onClick={handleDownloadReport}
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg"
           >
             <Download className="mr-2 h-4 w-4" />
             Download Report
           </Button>
         </div>
 
-        <Tabs defaultValue="9" value={selectedGrade} onValueChange={setSelectedGrade} className="mb-8">
-          <TabsList className="grid grid-cols-4 w-[400px]">
+        <Tabs defaultValue="9" value={selectedGrade} onValueChange={setSelectedGrade} className="w-full">
+          <TabsList className="grid grid-cols-4 w-[400px] bg-white/50 backdrop-blur-sm">
             <TabsTrigger value="9">Grade 9</TabsTrigger>
             <TabsTrigger value="10">Grade 10</TabsTrigger>
             <TabsTrigger value="11">Grade 11</TabsTrigger>
@@ -302,13 +315,13 @@ const Admin = () => {
           </TabsList>
           {Object.entries(students).map(([grade, gradeStudents]) => (
             <TabsContent key={grade} value={grade}>
-              <Card className="mb-8">
+              <Card className="backdrop-blur-sm bg-white/50 border border-white/20 shadow-lg">
                 <CardHeader>
-                  <CardTitle>Grade {grade} Students</CardTitle>
+                  <CardTitle className="text-xl text-gray-800">Grade {grade} Students</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Select value={selectedStudent} onValueChange={handleStudentChange}>
-                    <SelectTrigger className="w-[280px]">
+                    <SelectTrigger className="w-[280px] bg-white">
                       <SelectValue placeholder="Select a student" />
                     </SelectTrigger>
                     <SelectContent>
@@ -326,7 +339,11 @@ const Admin = () => {
         </Tabs>
 
         {currentStudent && (
-          <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               {Object.entries(currentStudent.subjects).map(([subject, data]) => (
                 <motion.div
@@ -335,8 +352,8 @@ const Admin = () => {
                   whileTap={{ scale: 0.98 }}
                 >
                   <Card 
-                    className={`cursor-pointer transition-colors ${
-                      selectedSubject === subject ? 'border-blue-500 bg-blue-50/50' : ''
+                    className={`cursor-pointer transition-all duration-300 hover:shadow-xl backdrop-blur-sm bg-white/50 border border-white/20 ${
+                      selectedSubject === subject ? 'ring-2 ring-purple-500 shadow-lg bg-purple-50/50' : ''
                     }`}
                     onClick={() => handleSubjectClick(subject)}
                   >
@@ -346,11 +363,17 @@ const Admin = () => {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">
+                      <div className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                         {data.grade}
                       </div>
                       <p className="text-gray-600 text-sm mt-1">Progress: {data.progress}%</p>
-                      <p className="text-blue-600 text-sm">Experiments: {data.experiments}</p>
+                      <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-purple-600 to-blue-600"
+                          style={{ width: `${data.progress}%` }}
+                        />
+                      </div>
+                      <p className="text-purple-600 text-sm mt-2">Experiments: {data.experiments}</p>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -358,9 +381,9 @@ const Admin = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="w-full col-span-2">
+              <Card className="col-span-2 backdrop-blur-sm bg-white/50 border border-white/20 shadow-lg">
                 <CardHeader>
-                  <CardTitle>Recent Activity</CardTitle>
+                  <CardTitle className="text-xl text-gray-800">Recent Activity</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
@@ -370,13 +393,17 @@ const Admin = () => {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm"
+                        className="flex items-center justify-between p-4 bg-white/70 rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
                       >
                         <div>
-                          <p className="font-medium">{activity.experiment}</p>
+                          <p className="font-medium text-gray-800">{activity.experiment}</p>
                           <p className="text-sm text-gray-500">{activity.date}</p>
                         </div>
-                        <div className="text-lg font-semibold text-blue-600">
+                        <div className={`text-lg font-semibold px-4 py-1 rounded-full ${
+                          activity.score >= 90 ? 'bg-green-100 text-green-600' :
+                          activity.score >= 75 ? 'bg-blue-100 text-blue-600' :
+                          'bg-red-100 text-red-600'
+                        }`}>
                           {activity.score}%
                         </div>
                       </motion.div>
@@ -385,89 +412,95 @@ const Admin = () => {
                 </CardContent>
               </Card>
 
-              <Card className="w-full">
+              <Card className="backdrop-blur-sm bg-white/50 border border-white/20 shadow-lg">
                 <CardHeader>
-                  <CardTitle>Subject Performance Trends</CardTitle>
+                  <CardTitle className="text-xl text-gray-800">Subject Performance Trends</CardTitle>
                 </CardHeader>
                 <CardContent className="h-[300px]" ref={chartRefs.performance}>
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={studentData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip />
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                      <XAxis dataKey="month" stroke="#666" />
+                      <YAxis stroke="#666" />
+                      <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.9)' }} />
                       <Legend />
-                      <Line type="monotone" dataKey="physics" stroke="#3b82f6" strokeWidth={2} />
-                      <Line type="monotone" dataKey="chemistry" stroke="#10b981" strokeWidth={2} />
-                      <Line type="monotone" dataKey="biology" stroke="#8b5cf6" strokeWidth={2} />
+                      <Line type="monotone" dataKey="physics" stroke="#8b5cf6" strokeWidth={2} />
+                      <Line type="monotone" dataKey="chemistry" stroke="#3b82f6" strokeWidth={2} />
+                      <Line type="monotone" dataKey="biology" stroke="#10b981" strokeWidth={2} />
                     </LineChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
 
-              <Card className="w-full">
+              <Card className="backdrop-blur-sm bg-white/50 border border-white/20 shadow-lg">
                 <CardHeader>
-                  <CardTitle>Monthly Engagement</CardTitle>
+                  <CardTitle className="text-xl text-gray-800">Monthly Engagement</CardTitle>
                 </CardHeader>
                 <CardContent className="h-[300px]" ref={chartRefs.engagement}>
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={studentData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip />
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                      <XAxis dataKey="month" stroke="#666" />
+                      <YAxis stroke="#666" />
+                      <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.9)' }} />
                       <Legend />
                       <Area 
                         type="monotone" 
                         dataKey={selectedSubject}
-                        stroke="#3b82f6"
-                        fill="#3b82f6"
-                        fillOpacity={0.2}
+                        stroke="#8b5cf6"
+                        fill="url(#purpleGradient)"
+                        fillOpacity={0.3}
                       />
+                      <defs>
+                        <linearGradient id="purpleGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
                     </AreaChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
 
-              <Card className="w-full">
+              <Card className="backdrop-blur-sm bg-white/50 border border-white/20 shadow-lg">
                 <CardHeader>
-                  <CardTitle>Skills Assessment</CardTitle>
+                  <CardTitle className="text-xl text-gray-800">Skills Assessment</CardTitle>
                 </CardHeader>
                 <CardContent className="h-[300px]" ref={chartRefs.skills}>
                   <ResponsiveContainer width="100%" height="100%">
                     <RadarChart outerRadius={90} data={skillsData}>
-                      <PolarGrid />
-                      <PolarAngleAxis dataKey="subject" />
-                      <PolarRadiusAxis />
-                      <Radar name="Current" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-                      <Radar name="Target" dataKey="B" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.6} />
+                      <PolarGrid stroke="rgba(0,0,0,0.1)" />
+                      <PolarAngleAxis dataKey="subject" stroke="#666" />
+                      <PolarRadiusAxis stroke="#666" />
+                      <Radar name="Current" dataKey="A" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.3} />
+                      <Radar name="Target" dataKey="B" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} />
                       <Legend />
                     </RadarChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
 
-              <Card className="w-full">
+              <Card className="backdrop-blur-sm bg-white/50 border border-white/20 shadow-lg">
                 <CardHeader>
-                  <CardTitle>Subject-wise Progress</CardTitle>
+                  <CardTitle className="text-xl text-gray-800">Subject-wise Progress</CardTitle>
                 </CardHeader>
                 <CardContent className="h-[300px]" ref={chartRefs.progress}>
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={studentData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip />
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                      <XAxis dataKey="month" stroke="#666" />
+                      <YAxis stroke="#666" />
+                      <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.9)' }} />
                       <Legend />
-                      <Bar dataKey="physics" fill="#3b82f6" />
-                      <Bar dataKey="chemistry" fill="#10b981" />
-                      <Bar dataKey="biology" fill="#8b5cf6" />
+                      <Bar dataKey="physics" fill="#8b5cf6" />
+                      <Bar dataKey="chemistry" fill="#3b82f6" />
+                      <Bar dataKey="biology" fill="#10b981" />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
             </div>
-          </>
+          </motion.div>
         )}
       </motion.div>
     </div>
