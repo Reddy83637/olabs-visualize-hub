@@ -1,5 +1,4 @@
-
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, RadialBarChart, RadialBar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { motion } from "framer-motion";
@@ -10,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import jsPDF from 'jspdf';
+import { useNavigate } from "react-router-dom";
 
 const studentData = [
   { month: 'Jan', physics: 85, chemistry: 78, biology: 92 },
@@ -66,6 +66,7 @@ const skillsData = [
 ];
 
 const Admin = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [selectedGrade, setSelectedGrade] = useState("9");
   const [selectedSubject, setSelectedSubject] = useState("physics");
@@ -76,6 +77,18 @@ const Admin = () => {
     skills: useRef(null),
     progress: useRef(null)
   };
+
+  useEffect(() => {
+    const isAuthenticated = sessionStorage.getItem("isAuthenticated");
+    if (!isAuthenticated) {
+      toast({
+        title: "Authentication Required",
+        description: "Please login to access the dashboard",
+        variant: "destructive",
+      });
+      navigate("/");
+    }
+  }, [navigate, toast]);
 
   const { data: queryData, isLoading } = useQuery({
     queryKey: ["studentData"],
@@ -108,164 +121,92 @@ const Admin = () => {
     const pdf = new jsPDF();
     const student = students[selectedGrade as keyof typeof students].find(s => s.id.toString() === selectedStudent);
 
-    // Add gradient-like background
-    pdf.setFillColor(240, 248, 255); // Light blue background
-    pdf.rect(0, 0, pdf.internal.pageSize.width, pdf.internal.pageSize.height, 'F');
+    pdf.setTextColor(44, 62, 80);
+    pdf.setFillColor(255, 255, 255);
 
-    // Header with gradient-like effect
-    pdf.setFillColor(139, 87, 246); // Purple color matching webpage
-    pdf.rect(0, 0, pdf.internal.pageSize.width, 45, 'F');
+    pdf.setFillColor(139, 87, 246);
+    pdf.rect(0, 0, pdf.internal.pageSize.width, 40, 'F');
     
-    // Add a subtle shadow effect
-    pdf.setFillColor(129, 77, 236);
-    pdf.rect(0, 43, pdf.internal.pageSize.width, 2, 'F');
-
-    // Header text
     pdf.setTextColor(255, 255, 255);
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(24);
-    pdf.text('Student Analytics Dashboard', pdf.internal.pageSize.width / 2, 25, { align: 'center' });
-    pdf.setFontSize(14);
-    pdf.text('Track individual student performance and engagement', pdf.internal.pageSize.width / 2, 35, { align: 'center' });
+    pdf.text('Student Performance Report', 20, 25);
 
-    // Student Card Section
+    pdf.setTextColor(44, 62, 80);
     let yPos = 60;
+
+    pdf.setFillColor(249, 250, 251);
+    pdf.roundedRect(15, yPos - 5, 180, 40, 3, 3, 'F');
     
-    // Card-like container
-    pdf.setFillColor(255, 255, 255);
-    pdf.setDrawColor(229, 231, 235);
-    pdf.roundedRect(15, yPos - 10, 180, 50, 3, 3, 'FD');
-
-    // Student Information
-    pdf.setTextColor(31, 41, 55);
+    pdf.setFontSize(14);
     pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(16);
-    pdf.text('Student Information', 20, yPos);
-
-    // Student details with modern layout
-    pdf.setFontSize(12);
+    pdf.text('Student Details', 20, yPos + 5);
+    
     pdf.setFont("helvetica", "normal");
-    pdf.text(`Name: ${student?.name}`, 25, yPos + 15);
-    pdf.text(`Grade: ${student?.grade} | Section: ${student?.section}`, 25, yPos + 25);
+    pdf.setFontSize(12);
+    pdf.text(`Name: ${student?.name}`, 25, yPos + 20);
+    pdf.text(`Grade: ${student?.grade} | Section: ${student?.section}`, 25, yPos + 30);
 
-    // Subject Cards Section
-    yPos += 70;
+    yPos += 50;
     pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(16);
-    pdf.text('Subject Performance', 20, yPos);
+    pdf.setFontSize(14);
+    pdf.text('Academic Performance', 20, yPos);
 
-    // Create modern cards for each subject
     Object.entries(currentStudentData.subjects).forEach(([subject, data], index) => {
-      const cardX = 20 + (index * 62);
-      pdf.setFillColor(255, 255, 255);
-      pdf.roundedRect(cardX, yPos + 10, 55, 70, 3, 3, 'FD');
+      const cardX = 25 + (index * 60);
       
-      // Subject title
+      pdf.setFillColor(249, 250, 251);
+      pdf.roundedRect(cardX - 5, yPos + 10, 55, 60, 3, 3, 'F');
+      
       pdf.setFont("helvetica", "bold");
       pdf.setFontSize(12);
-      pdf.setTextColor(31, 41, 55);
-      pdf.text(subject.charAt(0).toUpperCase() + subject.slice(1), cardX + 5, yPos + 25);
+      pdf.text(subject.toUpperCase(), cardX, yPos + 25);
       
-      // Grade
       pdf.setFont("helvetica", "bold");
       pdf.setFontSize(16);
-      pdf.text(data.grade, cardX + 5, yPos + 40);
+      pdf.text(data.grade, cardX, yPos + 40);
       
-      // Progress
       pdf.setFont("helvetica", "normal");
       pdf.setFontSize(10);
-      pdf.text(`Progress: ${data.progress}%`, cardX + 5, yPos + 55);
-      pdf.text(`Exp: ${data.experiments}`, cardX + 5, yPos + 65);
+      pdf.text(`Progress: ${data.progress}%`, cardX, yPos + 55);
     });
 
-    // Charts Section
-    yPos += 100;
+    yPos += 90;
     pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(16);
-    pdf.text('Performance Analytics', 20, yPos);
+    pdf.setFontSize(14);
+    pdf.text('Recent Activity', 20, yPos);
 
-    // Add charts in a grid layout
-    Object.entries(chartRefs).forEach(([chartName, ref], index) => {
-      if (ref.current) {
-        const chartElement = ref.current as HTMLElement;
-        if (chartElement) {
-          const svgData = new XMLSerializer().serializeToString(chartElement.querySelector('svg')!);
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d')!;
-          
-          const img = new Image();
-          const svg = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-          const url = URL.createObjectURL(svg);
+    currentStudentData.recentActivity.forEach((activity, index) => {
+      yPos += 20;
+      
+      pdf.setFillColor(249, 250, 251);
+      pdf.roundedRect(25, yPos - 5, 160, 25, 3, 3, 'F');
+      
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(10);
+      pdf.text(activity.date, 30, yPos + 5);
+      pdf.text(activity.experiment, 80, yPos + 5);
+      
+      const score = activity.score;
+      pdf.setFont("helvetica", "bold");
+      if (score >= 90) pdf.setTextColor(39, 174, 96);
+      else if (score >= 75) pdf.setTextColor(41, 128, 185);
+      else pdf.setTextColor(192, 57, 43);
+      
+      pdf.text(`${score}%`, 170, yPos + 5);
+      pdf.setTextColor(44, 62, 80);
+    });
 
-          img.onload = function() {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
-            const imgData = canvas.toDataURL('image/png');
-            
-            // Create card-like container for chart
-            const chartY = yPos + 10 + (Math.floor(index / 2) * 100);
-            const chartX = 20 + ((index % 2) * 95);
-            
-            pdf.setFillColor(255, 255, 255);
-            pdf.roundedRect(chartX - 5, chartY - 5, 90, 90, 3, 3, 'FD');
-            
-            // Chart title
-            pdf.setFont("helvetica", "bold");
-            pdf.setFontSize(11);
-            pdf.text(chartName.charAt(0).toUpperCase() + chartName.slice(1), chartX, chartY - 2);
-            
-            // Add chart
-            pdf.addImage(imgData, 'PNG', chartX, chartY, 80, 80);
-            URL.revokeObjectURL(url);
+    pdf.setFont("helvetica", "italic");
+    pdf.setFontSize(8);
+    pdf.setTextColor(127, 140, 141);
+    pdf.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, pdf.internal.pageSize.height - 10);
 
-            if (chartName === 'progress') {
-              // Recent Activity Section
-              yPos = chartY + 100;
-              pdf.setFont("helvetica", "bold");
-              pdf.setFontSize(16);
-              pdf.text('Recent Activity', 20, yPos);
+    pdf.save(`${student?.name}_performance_report.pdf`);
 
-              // Activity cards
-              currentStudentData.recentActivity.forEach((activity, idx) => {
-                const activityY = yPos + 15 + (idx * 25);
-                
-                // Card background
-                pdf.setFillColor(255, 255, 255);
-                pdf.roundedRect(20, activityY - 5, 170, 20, 3, 3, 'FD');
-                
-                // Activity details
-                pdf.setFont("helvetica", "normal");
-                pdf.setFontSize(11);
-                pdf.text(activity.date, 25, activityY + 5);
-                pdf.text(activity.experiment, 80, activityY + 5);
-                
-                // Score with color indicator
-                pdf.setFont("helvetica", "bold");
-                pdf.setTextColor(activity.score >= 90 ? 34 : activity.score >= 75 ? 146 : 239, 
-                               activity.score >= 90 ? 197 : activity.score >= 75 ? 146 : 68,
-                               activity.score >= 90 ? 94 : activity.score >= 75 ? 0 : 68);
-                pdf.text(`${activity.score}%`, 170, activityY + 5);
-                pdf.setTextColor(31, 41, 55);
-              });
-
-              // Footer
-              pdf.setFont("helvetica", "italic");
-              pdf.setFontSize(10);
-              pdf.setTextColor(107, 114, 128);
-              pdf.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, pdf.internal.pageSize.height - 10);
-
-              pdf.save(`${student?.name}_performance_report.pdf`);
-
-              toast({
-                title: "Report Downloaded",
-                description: `Enhanced performance report for ${student?.name} has been generated`,
-              });
-            }
-          };
-          img.src = url;
-        }
-      }
+    toast({
+      title: "Report Generated",
+      description: "Performance report has been downloaded successfully",
     });
   };
 

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -7,33 +6,58 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
+import { AlertCircle, Lock, Mail } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const Index = () => {
   const [credentials, setCredentials] = useState({ username: "", password: "" });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const ADMIN_CREDENTIALS = {
+    username: "admin@olabs.edu",
+    password: "admin123"
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // This is a mock login - should be replaced with actual authentication
-    if (credentials.username && credentials.password) {
-      toast({
-        title: "Login Successful",
-        description: "Welcome to OLabs Analytics Dashboard",
-      });
-      navigate("/admin");
-    } else {
-      toast({
-        title: "Login Failed",
-        description: "Please enter valid credentials",
-        variant: "destructive",
-      });
+    setError("");
+    setLoading(true);
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      if (
+        credentials.username === ADMIN_CREDENTIALS.username &&
+        credentials.password === ADMIN_CREDENTIALS.password
+      ) {
+        sessionStorage.setItem("isAuthenticated", "true");
+        sessionStorage.setItem("adminUser", credentials.username);
+        
+        toast({
+          title: "Login Successful",
+          description: "Welcome to OLabs Analytics Dashboard",
+        });
+        navigate("/admin");
+      } else {
+        setError("Invalid credentials. Please try again.");
+        toast({
+          title: "Login Failed",
+          description: "Please check your credentials and try again",
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      setError("An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50">
-      {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
           initial={{ opacity: 0 }}
@@ -41,7 +65,6 @@ const Index = () => {
           transition={{ duration: 1 }}
           className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=2670&q=80')] bg-cover bg-center"
         />
-        {/* Animated overlay patterns */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.05 }}
@@ -50,7 +73,6 @@ const Index = () => {
         />
       </div>
 
-      {/* Floating elements */}
       <motion.div
         animate={{ 
           y: [0, -20, 0],
@@ -84,7 +106,6 @@ const Index = () => {
           className="container mx-auto px-4 py-16"
         >
           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Hero Content */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -133,7 +154,6 @@ const Index = () => {
               </div>
             </motion.div>
 
-            {/* Login Form */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -150,49 +170,48 @@ const Index = () => {
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleLogin} className="space-y-6">
+                    {error && (
+                      <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertTitle>Error</AlertTitle>
+                        <AlertDescription>{error}</AlertDescription>
+                      </Alert>
+                    )}
                     <div className="space-y-2">
-                      <Label htmlFor="username">Username</Label>
-                      <motion.div
-                        whileHover={{ scale: 1.01 }}
-                        whileTap={{ scale: 0.99 }}
-                      >
+                      <Label htmlFor="username">Email</Label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                         <Input
                           id="username"
-                          type="text"
-                          placeholder="Enter your username"
+                          type="email"
+                          placeholder="admin@olabs.edu"
                           value={credentials.username}
                           onChange={(e) => setCredentials(prev => ({ ...prev, username: e.target.value }))}
-                          className="bg-white/50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
+                          className="pl-10 bg-white/50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
                         />
-                      </motion.div>
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="password">Password</Label>
-                      <motion.div
-                        whileHover={{ scale: 1.01 }}
-                        whileTap={{ scale: 0.99 }}
-                      >
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                         <Input
                           id="password"
                           type="password"
                           placeholder="Enter your password"
                           value={credentials.password}
                           onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
-                          className="bg-white/50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
+                          className="pl-10 bg-white/50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
                         />
-                      </motion.div>
+                      </div>
                     </div>
-                    <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                    <Button
+                      type="submit"
+                      className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white font-medium py-2.5"
+                      disabled={loading}
                     >
-                      <Button
-                        type="submit"
-                        className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white font-medium py-2.5"
-                      >
-                        Login to Dashboard
-                      </Button>
-                    </motion.div>
+                      {loading ? "Logging in..." : "Login to Dashboard"}
+                    </Button>
                   </form>
                 </CardContent>
               </Card>
