@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
-import { AlertCircle, Lock, Mail } from "lucide-react";
+import { AlertCircle, Lock, Mail, ChevronRight, LineChart, Users, Beaker } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const Index = () => {
@@ -56,168 +57,210 @@ const Index = () => {
     }
   };
 
+  const features = [
+    {
+      icon: LineChart,
+      title: "Real-time Analytics",
+      description: "Track student progress and performance metrics in real-time"
+    },
+    {
+      icon: Users,
+      title: "Student Management",
+      description: "Comprehensive tools for managing student data and activities"
+    },
+    {
+      icon: Beaker,
+      title: "Virtual Lab Insights",
+      description: "Detailed analytics on virtual lab usage and effectiveness"
+    }
+  ];
+
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50">
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.1 }}
-          transition={{ duration: 1 }}
-          className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=2670&q=80')] bg-cover bg-center"
-        />
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.05 }}
-          transition={{ delay: 0.5, duration: 1 }}
-          className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=2670&q=80')] bg-repeat bg-[length:50px_50px]"
+          animate={{ 
+            opacity: [0.1, 0.2, 0.1],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{ 
+            duration: 10,
+            repeat: Infinity,
+            repeatType: "reverse"
+          }}
+          className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=2670&q=80')] bg-cover bg-center filter blur-sm"
         />
       </div>
 
-      <motion.div
-        animate={{ 
-          y: [0, -20, 0],
-          rotate: [0, 5, 0]
-        }}
-        transition={{ 
-          repeat: Infinity,
-          duration: 6,
-          ease: "easeInOut"
-        }}
-        className="absolute top-20 right-20 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-2xl"
-      />
-      <motion.div
-        animate={{ 
-          y: [0, 20, 0],
-          rotate: [0, -5, 0]
-        }}
-        transition={{ 
-          repeat: Infinity,
-          duration: 5,
-          ease: "easeInOut"
-        }}
-        className="absolute bottom-20 left-20 w-40 h-40 bg-gradient-to-br from-blue-400/20 to-indigo-400/20 rounded-full blur-2xl"
-      />
+      {/* Floating Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-64 h-64 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full"
+            initial={{ 
+              x: Math.random() * window.innerWidth,
+              y: Math.random() * window.innerHeight
+            }}
+            animate={{ 
+              x: Math.random() * window.innerWidth,
+              y: Math.random() * window.innerHeight,
+              rotate: 360
+            }}
+            transition={{ 
+              duration: 20 + Math.random() * 10,
+              repeat: Infinity,
+              repeatType: "reverse",
+              ease: "linear"
+            }}
+          />
+        ))}
+      </div>
 
+      {/* Main Content */}
       <div className="relative z-10">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="container mx-auto px-4 py-16"
-        >
-          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="container mx-auto px-4 py-12 lg:py-20">
+          <div className="max-w-7xl mx-auto">
+            {/* Header */}
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="text-left space-y-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center mb-12"
             >
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.5 }}
+                initial={{ scale: 0.95 }}
+                animate={{ scale: 1 }}
                 className="inline-block"
               >
-                <span className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-full text-sm font-medium">
-                  Admin Portal
+                <span className="px-4 py-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-800">
+                  Admin Dashboard
                 </span>
               </motion.div>
-              
-              <h1 className="text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600">
-                OLabs Analytics Dashboard
+              <h1 className="mt-6 text-4xl lg:text-6xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600">
+                OLabs Analytics Platform
               </h1>
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                Advanced analytics and insights for administrators to monitor virtual lab performance and student progress.
+              <p className="mt-6 text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto">
+                Powerful insights and analytics to enhance virtual lab learning experiences
               </p>
+            </motion.div>
 
-              <div className="space-y-4">
-                {[
-                  { text: "Comprehensive Analytics Dashboard", color: "green" },
-                  { text: "Student Performance Tracking", color: "blue" },
-                  { text: "Virtual Lab Usage Metrics", color: "purple" },
-                  { text: "Real-time Data Visualization", color: "indigo" }
-                ].map((feature, index) => (
+            {/* Two Column Layout */}
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              {/* Left Column - Features */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+                className="space-y-8"
+              >
+                {features.map((feature, index) => (
                   <motion.div
                     key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.4 + index * 0.1 }}
-                    className="flex items-center space-x-3"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 + index * 0.1 }}
+                    className="flex items-start space-x-4 p-6 rounded-xl bg-white/60 backdrop-blur-lg border border-white/20 hover:bg-white/70 transition-colors"
                   >
-                    <motion.div
-                      whileHover={{ scale: 1.2 }}
-                      className={`w-2 h-2 bg-${feature.color}-500 rounded-full`}
-                    />
-                    <span className="text-gray-700">{feature.text}</span>
+                    <div className="flex-shrink-0">
+                      <div className="p-3 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500">
+                        <feature.icon className="w-6 h-6 text-white" />
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg text-gray-900">{feature.title}</h3>
+                      <p className="mt-1 text-gray-600">{feature.description}</p>
+                    </div>
                   </motion.div>
                 ))}
-              </div>
-            </motion.div>
+              </motion.div>
 
+              {/* Right Column - Login Form */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <Card className="w-full max-w-md mx-auto backdrop-blur-xl bg-white/80 border-0 shadow-2xl">
+                  <CardHeader className="space-y-1">
+                    <CardTitle className="text-2xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                      Administrator Login
+                    </CardTitle>
+                    <p className="text-sm text-gray-600 text-center">
+                      Access the analytics dashboard
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <form onSubmit={handleLogin} className="space-y-6">
+                      {error && (
+                        <Alert variant="destructive">
+                          <AlertCircle className="h-4 w-4" />
+                          <AlertTitle>Error</AlertTitle>
+                          <AlertDescription>{error}</AlertDescription>
+                        </Alert>
+                      )}
+                      <div className="space-y-2">
+                        <Label htmlFor="username">Email</Label>
+                        <div className="relative group">
+                          <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                          <Input
+                            id="username"
+                            type="email"
+                            placeholder="admin@olabs.edu"
+                            value={credentials.username}
+                            onChange={(e) => setCredentials(prev => ({ ...prev, username: e.target.value }))}
+                            className="pl-10 bg-white/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-all"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="password">Password</Label>
+                        <div className="relative group">
+                          <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                          <Input
+                            id="password"
+                            type="password"
+                            placeholder="Enter your password"
+                            value={credentials.password}
+                            onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
+                            className="pl-10 bg-white/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500 transition-all"
+                          />
+                        </div>
+                      </div>
+                      <Button
+                        type="submit"
+                        className="w-full relative overflow-hidden group bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white font-medium py-2.5"
+                        disabled={loading}
+                      >
+                        <span className="relative z-10 flex items-center justify-center gap-2">
+                          {loading ? "Logging in..." : (
+                            <>
+                              Login to Dashboard
+                              <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                            </>
+                          )}
+                        </span>
+                      </Button>
+                    </form>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </div>
+
+            {/* Footer Section */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="mt-16 text-center text-gray-600"
             >
-              <Card className="w-full max-w-md mx-auto backdrop-blur-xl bg-white/80 border-0 shadow-2xl">
-                <CardHeader className="space-y-1">
-                  <CardTitle className="text-2xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
-                    Administrator Login
-                  </CardTitle>
-                  <p className="text-sm text-gray-600 text-center">
-                    Access the analytics dashboard
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleLogin} className="space-y-6">
-                    {error && (
-                      <Alert variant="destructive">
-                        <AlertCircle className="h-4 w-4" />
-                        <AlertTitle>Error</AlertTitle>
-                        <AlertDescription>{error}</AlertDescription>
-                      </Alert>
-                    )}
-                    <div className="space-y-2">
-                      <Label htmlFor="username">Email</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                        <Input
-                          id="username"
-                          type="email"
-                          placeholder="admin@olabs.edu"
-                          value={credentials.username}
-                          onChange={(e) => setCredentials(prev => ({ ...prev, username: e.target.value }))}
-                          className="pl-10 bg-white/50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="password">Password</Label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                        <Input
-                          id="password"
-                          type="password"
-                          placeholder="Enter your password"
-                          value={credentials.password}
-                          onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
-                          className="pl-10 bg-white/50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
-                        />
-                      </div>
-                    </div>
-                    <Button
-                      type="submit"
-                      className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white font-medium py-2.5"
-                      disabled={loading}
-                    >
-                      {loading ? "Logging in..." : "Login to Dashboard"}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
+              <p className="text-sm">
+                © 2024 OLabs Analytics. All rights reserved.
+              </p>
             </motion.div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
