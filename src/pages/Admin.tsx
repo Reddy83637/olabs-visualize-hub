@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, RadialBarChart, RadialBar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
@@ -121,87 +120,115 @@ const Admin = () => {
 
     const pdf = new jsPDF();
     const student = students[selectedGrade as keyof typeof students].find(s => s.id.toString() === selectedStudent);
-
-    pdf.setTextColor(44, 62, 80);
-    pdf.setFillColor(255, 255, 255);
-
-    pdf.setFillColor(139, 87, 246);
-    pdf.rect(0, 0, pdf.internal.pageSize.width, 40, 'F');
+    const pageWidth = pdf.internal.pageSize.width;
     
+    const drawColoredRect = (x: number, y: number, width: number, height: number, color: string) => {
+      pdf.setFillColor(...hexToRGB(color));
+      pdf.rect(x, y, width, height, 'F');
+    };
+
+    const hexToRGB = (hex: string): [number, number, number] => {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return [r, g, b];
+    };
+
+    drawColoredRect(0, 0, pageWidth, 15, '#8B5CF6');
     pdf.setTextColor(255, 255, 255);
-    pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(24);
-    pdf.text('Student Performance Report', 20, 25);
-
-    pdf.setTextColor(44, 62, 80);
-    let yPos = 60;
-
-    pdf.setFillColor(249, 250, 251);
-    pdf.roundedRect(15, yPos - 5, 180, 40, 3, 3, 'F');
-    
-    pdf.setFontSize(14);
-    pdf.setFont("helvetica", "bold");
-    pdf.text('Student Details', 20, yPos + 5);
-    
-    pdf.setFont("helvetica", "normal");
     pdf.setFontSize(12);
-    pdf.text(`Name: ${student?.name}`, 25, yPos + 20);
-    pdf.text(`Grade: ${student?.grade} | Section: ${student?.section}`, 25, yPos + 30);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Student Report', 10, 10);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(new Date().toLocaleDateString(), pageWidth - 30, 10, { align: 'right' });
 
-    yPos += 50;
-    pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(14);
-    pdf.text('Academic Performance', 20, yPos);
+    let yPos = 25;
+    pdf.setTextColor(0, 0, 0);
+    
+    pdf.setFillColor(200, 200, 200);
+    pdf.rect(10, yPos, 30, 30, 'F');
+    
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text(`${student?.name}`, 45, yPos + 10);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(10);
+    pdf.text(`Grade: ${student?.grade} | Section: ${student?.section}`, 45, yPos + 20);
 
-    Object.entries(currentStudentData.subjects).forEach(([subject, data], index) => {
-      const cardX = 25 + (index * 60);
+    yPos += 45;
+    drawColoredRect(10, yPos, pageWidth - 20, 10, '#F3F4F6');
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Performance', 15, yPos + 7);
+
+    const subjects = Object.entries(currentStudentData.subjects);
+    const colors = ['#4CAF50', '#2196F3', '#FFC107', '#9C27B0'];
+    
+    subjects.forEach(([subject, data], index) => {
+      const barY = yPos + (index * 15);
+      const barWidth = (data.progress / 100) * 150;
       
-      pdf.setFillColor(249, 250, 251);
-      pdf.roundedRect(cardX - 5, yPos + 10, 55, 60, 3, 3, 'F');
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(subject, 15, barY + 5);
       
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(12);
-      pdf.text(subject.toUpperCase(), cardX, yPos + 25);
+      pdf.setFillColor(230, 230, 230);
+      pdf.rect(60, barY, 150, 8, 'F');
       
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(16);
-      pdf.text(data.grade, cardX, yPos + 40);
+      pdf.setFillColor(...hexToRGB(colors[index]));
+      pdf.rect(60, barY, barWidth, 8, 'F');
       
-      pdf.setFont("helvetica", "normal");
-      pdf.setFontSize(10);
-      pdf.text(`Progress: ${data.progress}%`, cardX, yPos + 55);
+      pdf.text(`${data.progress}%`, 215, barY + 5);
     });
 
-    yPos += 90;
-    pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(14);
-    pdf.text('Recent Activity', 20, yPos);
+    yPos += 80;
+    drawColoredRect(10, yPos, pageWidth - 20, 10, '#F3F4F6');
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Behavior', 15, yPos + 7);
 
     currentStudentData.recentActivity.forEach((activity, index) => {
-      yPos += 20;
+      const activityY = yPos + (index * 25);
       
-      pdf.setFillColor(249, 250, 251);
-      pdf.roundedRect(25, yPos - 5, 160, 25, 3, 3, 'F');
+      pdf.setDrawColor(200, 200, 200);
+      pdf.line(20, activityY, 20, activityY + 20);
       
-      pdf.setFont("helvetica", "normal");
-      pdf.setFontSize(10);
-      pdf.text(activity.date, 30, yPos + 5);
-      pdf.text(activity.experiment, 80, yPos + 5);
+      pdf.setFillColor(...hexToRGB(colors[index % colors.length]));
+      pdf.circle(20, activityY + 5, 2, 'F');
       
-      const score = activity.score;
-      pdf.setFont("helvetica", "bold");
-      if (score >= 90) pdf.setTextColor(39, 174, 96);
-      else if (score >= 75) pdf.setTextColor(41, 128, 185);
-      else pdf.setTextColor(192, 57, 43);
-      
-      pdf.text(`${score}%`, 170, yPos + 5);
-      pdf.setTextColor(44, 62, 80);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(activity.experiment, 30, activityY + 5);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text(activity.date, 30, activityY + 12);
+      pdf.text(`Score: ${activity.score}%`, 150, activityY + 5);
     });
 
-    pdf.setFont("helvetica", "italic");
+    yPos += 100;
+    drawColoredRect(10, yPos, pageWidth - 20, 10, '#F3F4F6');
+    pdf.setTextColor(0, 0, 0);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Statistics', 15, yPos + 7);
+
+    const barData = studentData.map(data => data[selectedSubject]);
+    const maxValue = Math.max(...barData);
+    const barHeight = 60;
+    const barSpacing = 20;
+    const maxBarHeight = 50;
+
+    barData.forEach((value, index) => {
+      const barX = 30 + (index * barSpacing);
+      const normalizedHeight = (value / maxValue) * maxBarHeight;
+      
+      pdf.setFillColor(...hexToRGB(colors[index % colors.length]));
+      pdf.rect(barX, yPos + (maxBarHeight - normalizedHeight), 15, normalizedHeight, 'F');
+      
+      pdf.setFontSize(8);
+      pdf.text(value.toString(), barX + 4, yPos + (maxBarHeight - normalizedHeight) - 2);
+    });
+
+    const footerY = pdf.internal.pageSize.height - 10;
     pdf.setFontSize(8);
-    pdf.setTextColor(127, 140, 141);
-    pdf.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, pdf.internal.pageSize.height - 10);
+    pdf.setTextColor(150, 150, 150);
+    pdf.text('Generated by OLabs Analytics Platform', 10, footerY);
+    pdf.text('Page 1/1', pageWidth - 20, footerY, { align: 'right' });
 
     pdf.save(`${student?.name}_performance_report.pdf`);
 
@@ -232,7 +259,6 @@ const Admin = () => {
         transition={{ duration: 0.5 }}
         className="max-w-[1920px] mx-auto space-y-6 md:space-y-8"
       >
-        {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-8">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -262,7 +288,6 @@ const Admin = () => {
           </motion.div>
         </div>
 
-        {/* Grade Selection Tabs */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -304,7 +329,6 @@ const Admin = () => {
           </Tabs>
         </motion.div>
 
-        {/* Student Performance Cards */}
         {currentStudent && (
           <AnimatePresence>
             <motion.div
@@ -354,7 +378,6 @@ const Admin = () => {
                 ))}
               </div>
 
-              {/* Recent Activity and Charts */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
                 <Card className="col-span-1 lg:col-span-2 backdrop-blur-sm bg-white/50 border border-white/20 shadow-lg">
                   <CardHeader>
@@ -387,7 +410,6 @@ const Admin = () => {
                   </CardContent>
                 </Card>
 
-                {/* Charts Section */}
                 <Card className="backdrop-blur-sm bg-white/50 border border-white/20 shadow-lg">
                   <CardHeader>
                     <CardTitle className="text-xl text-gray-800">Subject Performance Trends</CardTitle>
