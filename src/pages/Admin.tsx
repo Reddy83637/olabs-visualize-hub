@@ -1,3 +1,4 @@
+
 import { useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, RadialBarChart, RadialBar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
@@ -6,10 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Download, LogOut } from "lucide-react";
+import { Download } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import jsPDF from 'jspdf';
-import { useNavigate } from "react-router-dom";
 
 const studentData = [
   { month: 'Jan', physics: 85, chemistry: 78, biology: 92 },
@@ -269,15 +269,6 @@ const Admin = () => {
     });
   };
 
-  const handleLogout = () => {
-    sessionStorage.removeItem("isAuthenticated");
-    toast({
-      title: "Logged Out",
-      description: "You have been successfully logged out",
-    });
-    navigate("/");
-  };
-
   const currentStudent = studentDetails[Number(selectedStudent) as keyof typeof studentDetails];
 
   return (
@@ -306,23 +297,13 @@ const Admin = () => {
             </h1>
             <p className="text-gray-600 mt-2 text-lg">Track individual student performance and engagement</p>
           </div>
-          <div className="flex gap-4">
-            <Button
-              onClick={handleDownloadReport}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg"
-            >
-              <Download className="mr-2 h-4 w-4" />
-              Download Report
-            </Button>
-            <Button
-              onClick={handleLogout}
-              variant="outline"
-              className="border-red-500 text-red-500 hover:bg-red-50"
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
-            </Button>
-          </div>
+          <Button
+            onClick={handleDownloadReport}
+            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg"
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Download Report
+          </Button>
         </div>
 
         <Tabs defaultValue="9" value={selectedGrade} onValueChange={setSelectedGrade} className="w-full">

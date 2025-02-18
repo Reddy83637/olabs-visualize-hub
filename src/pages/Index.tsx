@@ -7,64 +7,27 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
-import { AlertCircle, Lock, Mail } from "lucide-react";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const Index = () => {
   const [credentials, setCredentials] = useState({ username: "", password: "" });
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // In a real application, these would be stored securely
-  const ADMIN_USERNAME = "admin@olabs.edu";
-  const ADMIN_PASSWORD = "admin123";
-
-  const validateCredentials = () => {
-    if (!credentials.username || !credentials.password) {
-      setError("Please enter both username and password");
-      return false;
-    }
-    if (!credentials.username.includes("@")) {
-      setError("Please enter a valid email address");
-      return false;
-    }
-    return true;
-  };
-
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    
-    if (!validateCredentials()) return;
-
-    setLoading(true);
-    try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      if (credentials.username === ADMIN_USERNAME && credentials.password === ADMIN_PASSWORD) {
-        // Store auth state in session storage
-        sessionStorage.setItem("isAuthenticated", "true");
-        
-        toast({
-          title: "Login Successful",
-          description: "Welcome to OLabs Analytics Dashboard",
-        });
-        navigate("/admin");
-      } else {
-        setError("Invalid credentials. Please try again.");
-        toast({
-          title: "Login Failed",
-          description: "Please check your credentials and try again",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      setError("An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
+    // This is a mock login - should be replaced with actual authentication
+    if (credentials.username && credentials.password) {
+      toast({
+        title: "Login Successful",
+        description: "Welcome to OLabs Analytics Dashboard",
+      });
+      navigate("/admin");
+    } else {
+      toast({
+        title: "Login Failed",
+        description: "Please enter valid credentials",
+        variant: "destructive",
+      });
     }
   };
 
@@ -78,6 +41,7 @@ const Index = () => {
           transition={{ duration: 1 }}
           className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=2670&q=80')] bg-cover bg-center"
         />
+        {/* Animated overlay patterns */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.05 }}
@@ -186,42 +150,37 @@ const Index = () => {
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleLogin} className="space-y-6">
-                    {error && (
-                      <Alert variant="destructive">
-                        <AlertCircle className="h-4 w-4" />
-                        <AlertTitle>Error</AlertTitle>
-                        <AlertDescription>
-                          {error}
-                        </AlertDescription>
-                      </Alert>
-                    )}
                     <div className="space-y-2">
-                      <Label htmlFor="username">Email</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Label htmlFor="username">Username</Label>
+                      <motion.div
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.99 }}
+                      >
                         <Input
                           id="username"
-                          type="email"
-                          placeholder="admin@olabs.edu"
+                          type="text"
+                          placeholder="Enter your username"
                           value={credentials.username}
                           onChange={(e) => setCredentials(prev => ({ ...prev, username: e.target.value }))}
-                          className="pl-10 bg-white/50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
+                          className="bg-white/50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
                         />
-                      </div>
+                      </motion.div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="password">Password</Label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <motion.div
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.99 }}
+                      >
                         <Input
                           id="password"
                           type="password"
                           placeholder="Enter your password"
                           value={credentials.password}
                           onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
-                          className="pl-10 bg-white/50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
+                          className="bg-white/50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
                         />
-                      </div>
+                      </motion.div>
                     </div>
                     <motion.div
                       whileHover={{ scale: 1.02 }}
@@ -230,9 +189,8 @@ const Index = () => {
                       <Button
                         type="submit"
                         className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white font-medium py-2.5"
-                        disabled={loading}
                       >
-                        {loading ? "Logging in..." : "Login to Dashboard"}
+                        Login to Dashboard
                       </Button>
                     </motion.div>
                   </form>
