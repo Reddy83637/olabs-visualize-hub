@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { AlertCircle, Lock, Mail, ChevronRight, LineChart, Users, Beaker } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import AIChat from "@/components/ui/AIChat";
 
 const Index = () => {
   const [credentials, setCredentials] = useState({ username: "", password: "" });
@@ -262,6 +262,9 @@ const Index = () => {
           </div>
         </div>
       </div>
+
+      {/* Add the AIChat component */}
+      <AIChat />
     </div>
   );
 };
