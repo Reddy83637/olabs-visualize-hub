@@ -121,6 +121,7 @@ const Admin = () => {
     const pdf = new jsPDF();
     const student = students[selectedGrade as keyof typeof students].find(s => s.id.toString() === selectedStudent);
     const pageWidth = pdf.internal.pageSize.width;
+    const pageHeight = pdf.internal.pageSize.height;
     
     const drawColoredRect = (x: number, y: number, width: number, height: number, color: string) => {
       pdf.setFillColor(...hexToRGB(color));
@@ -134,107 +135,163 @@ const Admin = () => {
       return [r, g, b];
     };
 
-    drawColoredRect(0, 0, pageWidth, 15, '#8B5CF6');
+    // Professional Header with gradient-like effect
+    drawColoredRect(0, 0, pageWidth, 25, '#4338CA');
+    drawColoredRect(0, 20, pageWidth, 5, '#6366F1');
+    
+    // Header Content
     pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(12);
+    pdf.setFontSize(16);
     pdf.setFont('helvetica', 'bold');
-    pdf.text('Student Report', 10, 10);
-    pdf.setFont('helvetica', 'normal');
-    pdf.text(new Date().toLocaleDateString(), pageWidth - 30, 10, { align: 'right' });
-
-    let yPos = 25;
+    pdf.text('ACADEMIC PERFORMANCE REPORT', 10, 15);
+  
+    // Student Information Section
+    let yPos = 40;
     pdf.setTextColor(0, 0, 0);
-    
-    pdf.setFillColor(200, 200, 200);
-    pdf.rect(10, yPos, 30, 30, 'F');
-    
     pdf.setFontSize(12);
     pdf.setFont('helvetica', 'bold');
-    pdf.text(`${student?.name}`, 45, yPos + 10);
-    pdf.setFont('helvetica', 'normal');
+    pdf.text('STUDENT INFORMATION', 10, yPos);
+  
+    // Information Box
+    drawColoredRect(10, yPos + 5, pageWidth - 20, 30, '#F3F4F6');
     pdf.setFontSize(10);
-    pdf.text(`Grade: ${student?.grade} | Section: ${student?.section}`, 45, yPos + 20);
+    pdf.setTextColor(60, 60, 60);
+    pdf.text([
+      `Name: ${student?.name}`,
+      `Grade: ${student?.grade}`,
+      `Section: ${student?.section}`,
+      `Academic Year: 2023-2024`,
+      `Report Generated: ${new Date().toLocaleDateString()}`
+    ], 15, yPos + 15);
 
-    yPos += 45;
-    drawColoredRect(10, yPos, pageWidth - 20, 10, '#F3F4F6');
-    pdf.setFontSize(11);
+    // Academic Performance Section
+    yPos += 50;
+    pdf.setFontSize(12);
     pdf.setFont('helvetica', 'bold');
-    pdf.text('Performance', 15, yPos + 7);
-
+    pdf.setTextColor(0, 0, 0);
+    pdf.text('ACADEMIC PERFORMANCE OVERVIEW', 10, yPos);
+  
     const subjects = Object.entries(currentStudentData.subjects);
-    const colors = ['#4CAF50', '#2196F3', '#FFC107', '#9C27B0'];
+    const colors = ['#4F46E5', '#7C3AED', '#EC4899', '#06B6D4'];
     
+    // Subject Performance Bars
+    yPos += 10;
     subjects.forEach(([subject, data], index) => {
-      const barY = yPos + (index * 15);
+      const barY = yPos + (index * 20);
       const barWidth = (data.progress / 100) * 150;
       
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(subject, 15, barY + 5);
+      // Subject Label
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(10);
+      pdf.text(subject.toUpperCase(), 15, barY + 5);
       
-      pdf.setFillColor(230, 230, 230);
+      // Background Bar
+      pdf.setFillColor(240, 240, 240);
       pdf.rect(60, barY, 150, 8, 'F');
       
+      // Progress Bar
       pdf.setFillColor(...hexToRGB(colors[index]));
       pdf.rect(60, barY, barWidth, 8, 'F');
       
-      pdf.text(`${data.progress}%`, 215, barY + 5);
+      // Grade and Progress
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`${data.progress}% (Grade ${data.grade})`, 220, barY + 5);
     });
 
-    yPos += 80;
-    drawColoredRect(10, yPos, pageWidth - 20, 10, '#F3F4F6');
+    // Experiments and Activities Section
+    yPos += 100;
+    pdf.setFontSize(12);
     pdf.setFont('helvetica', 'bold');
-    pdf.text('Behavior', 15, yPos + 7);
-
+    pdf.text('LABORATORY EXPERIMENTS & ACTIVITIES', 10, yPos);
+  
+    // Activity Timeline
+    yPos += 10;
     currentStudentData.recentActivity.forEach((activity, index) => {
       const activityY = yPos + (index * 25);
       
-      pdf.setDrawColor(200, 200, 200);
-      pdf.line(20, activityY, 20, activityY + 20);
+      // Activity Box
+      drawColoredRect(15, activityY, pageWidth - 30, 20, '#F8FAFC');
+      pdf.setDrawColor(...hexToRGB(colors[index % colors.length]));
+      pdf.setLineWidth(0.5);
+      pdf.line(15, activityY, 15, activityY + 20);
       
-      pdf.setFillColor(...hexToRGB(colors[index % colors.length]));
-      pdf.circle(20, activityY + 5, 2, 'F');
-      
+      // Activity Details
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(activity.experiment, 25, activityY + 8);
       pdf.setFont('helvetica', 'normal');
-      pdf.text(activity.experiment, 30, activityY + 5);
-      pdf.setTextColor(100, 100, 100);
-      pdf.text(activity.date, 30, activityY + 12);
-      pdf.text(`Score: ${activity.score}%`, 150, activityY + 5);
+      pdf.setFontSize(9);
+      pdf.text(`Date: ${activity.date}`, 25, activityY + 16);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(`Score: ${activity.score}%`, pageWidth - 45, activityY + 12);
     });
 
-    yPos += 100;
-    drawColoredRect(10, yPos, pageWidth - 20, 10, '#F3F4F6');
-    pdf.setTextColor(0, 0, 0);
+    // Analytics Section
+    yPos += 120;
+    pdf.setFontSize(12);
     pdf.setFont('helvetica', 'bold');
-    pdf.text('Statistics', 15, yPos + 7);
-
-    const barData = studentData.map(data => data[selectedSubject]);
-    const maxValue = Math.max(...barData);
-    const barHeight = 60;
-    const barSpacing = 20;
-    const maxBarHeight = 50;
-
-    barData.forEach((value, index) => {
-      const barX = 30 + (index * barSpacing);
-      const normalizedHeight = (value / maxValue) * maxBarHeight;
+    pdf.text('PERFORMANCE ANALYTICS', 10, yPos);
+  
+    // Monthly Performance Chart
+    yPos += 20;
+    const monthlyData = studentData.slice(-6);
+    const chartWidth = 160;
+    const chartHeight = 40;
+    const barWidth = chartWidth / monthlyData.length - 5;
+    
+    monthlyData.forEach((data, index) => {
+      const value = data[selectedSubject];
+      const barHeight = (value / 100) * chartHeight;
+      const barX = 20 + (index * (barWidth + 5));
       
       pdf.setFillColor(...hexToRGB(colors[index % colors.length]));
-      pdf.rect(barX, yPos + (maxBarHeight - normalizedHeight), 15, normalizedHeight, 'F');
+      pdf.rect(barX, yPos + (chartHeight - barHeight), barWidth, barHeight, 'F');
       
+      // Month Label
       pdf.setFontSize(8);
-      pdf.text(value.toString(), barX + 4, yPos + (maxBarHeight - normalizedHeight) - 2);
+      pdf.text(data.month, barX, yPos + chartHeight + 10);
+      
+      // Value
+      pdf.text(value.toString(), barX, yPos + (chartHeight - barHeight) - 2);
     });
 
-    const footerY = pdf.internal.pageSize.height - 10;
-    pdf.setFontSize(8);
-    pdf.setTextColor(150, 150, 150);
-    pdf.text('Generated by OLabs Analytics Platform', 10, footerY);
-    pdf.text('Page 1/1', pageWidth - 20, footerY, { align: 'right' });
+    // Key Performance Indicators
+    yPos += 80;
+    const kpiData = [
+      { label: 'Average Performance', value: '91%' },
+      { label: 'Experiments Completed', value: `${currentStudentData.subjects[selectedSubject].experiments}` },
+      { label: 'Overall Grade', value: currentStudentData.subjects[selectedSubject].grade }
+    ];
 
-    pdf.save(`${student?.name}_performance_report.pdf`);
+    kpiData.forEach((kpi, index) => {
+      const kpiX = 15 + (index * ((pageWidth - 30) / 3));
+      drawColoredRect(kpiX, yPos, (pageWidth - 40) / 3, 40, '#F3F4F6');
+      
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(kpi.label, kpiX + 5, yPos + 15);
+      
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(kpi.value, kpiX + 5, yPos + 30);
+    });
+
+    // Footer
+    pdf.setFillColor(243, 244, 246);
+    pdf.rect(0, pageHeight - 20, pageWidth, 20, 'F');
+    
+    pdf.setFontSize(8);
+    pdf.setTextColor(100, 100, 100);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text('Generated by OLabs Analytics Platform', 10, pageHeight - 8);
+    pdf.text(`Report ID: ${Date.now()}`, pageWidth - 60, pageHeight - 8);
+
+    // Save PDF
+    pdf.save(`${student?.name}_academic_report.pdf`);
 
     toast({
       title: "Report Generated",
-      description: "Performance report has been downloaded successfully",
+      description: "Academic performance report has been downloaded successfully",
     });
   };
 
