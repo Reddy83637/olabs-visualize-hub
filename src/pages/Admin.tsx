@@ -147,7 +147,7 @@ const Admin = () => {
       pdf.setFillColor(hexToRgb(color).r, hexToRgb(color).g, hexToRgb(color).b);
       if (radius > 0) {
         // Draw rounded rectangle
-        pdf.roundedRect(x, y, w, h, radius, radius, 'F');
+        pdf.roundedRect(x, y, w, h, radius, 'F');
       } else {
         pdf.rect(x, y, w, h, 'F');
       }
@@ -691,17 +691,13 @@ const Admin = () => {
         
         if (step === gradientSteps - 1) {
           // Last segment gets rounded corners on right side
-          // Fix error TS2554 - Use the correct signature for roundedRect
-          // Original: pdf.roundedRect(barX + (step * stepWidth), skillY, stepWidth, barHeight, 0, 0, 3, 3, 'F')
-          // Fix: Use the correct signature with radiusSize parameter and style
-          const rightRadius = 3;
+          // Fix error TS2345 - Convert string radius to number
+          const rightRadius = 3; // Already a number, no conversion needed
           pdf.roundedRect(barX + (step * stepWidth), skillY, stepWidth, barHeight, rightRadius, 'F');
         } else if (step === 0) {
           // First segment gets rounded corners on left side
-          // Fix error TS2554 - Use the correct signature for roundedRect
-          // Original: pdf.roundedRect(barX + (step * stepWidth), skillY, stepWidth, barHeight, 3, 3, 0, 0, 'F')
-          // Fix: Use the correct signature with radiusSize parameter and style
-          const leftRadius = 3;
+          // Fix error TS2345 - Convert string radius to number
+          const leftRadius = 3; // Already a number, no conversion needed
           pdf.roundedRect(barX + (step * stepWidth), skillY, stepWidth, barHeight, leftRadius, 'F');
         } else {
           // Middle segments get no rounded corners
@@ -744,9 +740,10 @@ const Admin = () => {
       // Pathway box with gradient background
       drawRect(boxX, yPos, pathwayBoxWidth, pathwayBoxHeight, pathway.color, 5);
       
-      // White transparent overlay for text area
-      pdf.setFillColor(255, 255, 255, 0.85);
-      pdf.roundedRect(boxX + 2, yPos + 2, pathwayBoxWidth - 4, pathwayBoxHeight - 4, 3, 'F');
+      // White transparent overlay for text area - Fix error TS2345 by using number
+      // Original: pdf.roundedRect(boxX + 2, yPos + 2, pathwayBoxWidth - 4, pathwayBoxHeight - 4, 3, 'F');
+      const cornerRadius = 3; // Explicitly define as number
+      pdf.roundedRect(boxX + 2, yPos + 2, pathwayBoxWidth - 4, pathwayBoxHeight - 4, cornerRadius, 'F');
       
       // Pathway title
       setTextStyle(fonts.normal);
@@ -1238,3 +1235,4 @@ const Admin = () => {
 };
 
 export default Admin;
+
