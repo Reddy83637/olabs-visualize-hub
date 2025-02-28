@@ -122,28 +122,28 @@ const Admin = () => {
     const student = students[selectedGrade as keyof typeof students].find(s => s.id.toString() === selectedStudent);
     if (!student) return;
     
-    // Initialize the PDF document
+    // Initialize the PDF document with professional settings
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
       format: 'a4',
     });
     
-    // Set document properties
+    // Set document properties for metadata
     pdf.setProperties({
       title: `OLabs Scientific Performance Report - ${student.name}`,
-      subject: 'Student Performance Analysis',
+      subject: 'Student Performance Analysis and Scientific Proficiency Assessment',
       author: 'OLabs Educational Platform',
-      keywords: 'education, science, performance, analytics',
-      creator: 'OLabs Analytics System'
+      keywords: 'education, science, performance, analytics, laboratory, experiments',
+      creator: 'OLabs Analytics System v2.1'
     });
     
-    // Get document dimensions
+    // Get document dimensions for responsive layouts
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
     
-    // Helper functions
-    const drawRect = (x, y, w, h, color, radius = 0) => {
+    // Helper functions for advanced PDF generation
+    const drawRect = (x: number, y: number, w: number, h: number, color: string, radius = 0) => {
       pdf.setFillColor(hexToRgb(color).r, hexToRgb(color).g, hexToRgb(color).b);
       if (radius > 0) {
         // Draw rounded rectangle
@@ -153,7 +153,7 @@ const Admin = () => {
       }
     };
     
-    const hexToRgb = (hex) => {
+    const hexToRgb = (hex: string) => {
       const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
       return result ? {
         r: parseInt(result[1], 16),
@@ -162,11 +162,12 @@ const Admin = () => {
       } : { r: 0, g: 0, b: 0 };
     };
     
-    // Define color schemes for professional look
+    // Define professional color schemes based on OLabs branding
     const colors = {
-      primary: '#0747A6',         // Deep blue for headers
+      primary: '#0747A6',         // Deep blue for headers - OLabs primary
       secondary: '#0065FF',       // Bright blue for highlights
       tertiary: '#00B8D9',        // Teal for accents
+      quaternary: '#6554C0',      // Purple for scientific elements
       background: '#FFFFFF',      // White for background
       lightBg: '#F4F5F7',         // Light gray for alternate sections
       text: '#172B4D',            // Dark blue-gray for main text
@@ -175,8 +176,12 @@ const Admin = () => {
       warning: '#FFAB00',         // Amber for moderate indicators
       danger: '#FF5630',          // Red for negative indicators
       border: '#DFE1E6',          // Light gray for borders
+      physics: '#6554C0',         // Purple for physics
+      chemistry: '#00B8D9',       // Teal for chemistry
+      biology: '#36B37E',         // Green for biology
     };
     
+    // Define typography system for consistent text styling
     const fonts = {
       heading: {
         size: 16,
@@ -198,18 +203,32 @@ const Admin = () => {
         style: 'normal',
         font: 'helvetica',
       },
+      tiny: {
+        size: 6,
+        style: 'normal',
+        font: 'helvetica',
+      }
     };
     
-    // Set text styling function
-    const setTextStyle = (style) => {
+    // Set text styling function for typography consistency
+    const setTextStyle = (style: any) => {
       pdf.setFont(style.font, style.style);
       pdf.setFontSize(style.size);
     };
     
-    // Gradient header with OLabs branding
+    // Create professional header with OLabs branding
     // Draw blue gradient header
     const headerHeight = 35;
-    const gradientColors = [colors.primary, colors.secondary, colors.tertiary];
+    
+    // Create a smoother gradient with more steps
+    const gradientColors = [
+      colors.primary, 
+      '#1755B4', 
+      '#2864C2', 
+      '#3973D0', 
+      '#4A82DE', 
+      colors.secondary
+    ];
     
     gradientColors.forEach((color, index, array) => {
       const segmentHeight = headerHeight / array.length;
@@ -217,77 +236,140 @@ const Admin = () => {
       drawRect(0, y, pageWidth, segmentHeight, color);
     });
     
-    // Add OLabs logo (placeholder - in production would be an actual logo)
+    // Add OLabs logo placeholder in a white circle
     const logoSize = 20;
     const logoX = 10;
     const logoY = 7.5;
-    drawRect(logoX, logoY, logoSize, logoSize, '#FFFFFF', 3);
     
-    // Add report title
+    // White circle background for logo
+    drawRect(logoX, logoY, logoSize, logoSize, '#FFFFFF', 10);
+    
+    // Add "OL" text as logo placeholder - in production this would be an actual logo
+    setTextStyle({...fonts.heading, size: 12});
+    pdf.setTextColor(hexToRgb(colors.primary).r, hexToRgb(colors.primary).g, hexToRgb(colors.primary).b);
+    pdf.text('OL', logoX + 5, logoY + 13, { align: 'center' });
+    
+    // Add report title with professional styling
     setTextStyle(fonts.heading);
     pdf.setTextColor(255, 255, 255);
     pdf.text('OLABS SCIENTIFIC PERFORMANCE REPORT', pageWidth / 2, 15, { align: 'center' });
     
+    // Add professional tagline
     setTextStyle(fonts.normal);
     pdf.text('Advancing Science Education Through Interactive Experimentation', pageWidth / 2, 22, { align: 'center' });
     
-    // Add timestamp
+    // Add document timestamp with ISO format
     setTextStyle(fonts.small);
     const currentDate = new Date().toLocaleDateString('en-US', { 
-      year: 'numeric', month: 'long', day: 'numeric' 
+      year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' 
     });
     pdf.text(`Generated: ${currentDate}`, pageWidth - 15, 30, { align: 'right' });
     
     // STUDENT PROFILE SECTION
     let yPos = headerHeight + 10;
     
-    // Section heading
+    // Section heading with professional styling
     setTextStyle(fonts.subheading);
     pdf.setTextColor(hexToRgb(colors.primary).r, hexToRgb(colors.primary).g, hexToRgb(colors.primary).b);
     pdf.text('STUDENT PROFILE', 10, yPos);
     
-    // Horizontal separator
+    // Professional separator line
     pdf.setDrawColor(hexToRgb(colors.tertiary).r, hexToRgb(colors.tertiary).g, hexToRgb(colors.tertiary).b);
     pdf.setLineWidth(0.5);
     pdf.line(10, yPos + 2, pageWidth - 10, yPos + 2);
     
     yPos += 10;
     
-    // Student info card
-    drawRect(10, yPos, pageWidth - 20, 25, colors.lightBg, 3);
+    // Student info card with professional styling
+    drawRect(10, yPos, pageWidth - 20, 25, colors.lightBg, 5);
     
-    // Student information
+    // Student information with consistent layout
     setTextStyle(fonts.normal);
     pdf.setTextColor(hexToRgb(colors.text).r, hexToRgb(colors.text).g, hexToRgb(colors.text).b);
     
+    // First column
     pdf.text(`Name: ${student.name}`, 15, yPos + 8);
     pdf.text(`Grade: ${student.grade}`, 15, yPos + 16);
     
+    // Second column
     pdf.text(`Section: ${student.section}`, 75, yPos + 8);
     pdf.text(`Academic Year: 2023-2024`, 75, yPos + 16);
     
-    pdf.text(`Overall Grade: ${currentStudentData.overallGrade}`, 150, yPos + 8);
-    pdf.text(`Attendance: ${currentStudentData.attendance}%`, 150, yPos + 16);
+    // Third column - with highlight badges
+    pdf.text(`Overall Grade:`, 150, yPos + 8);
+    // Grade badge
+    drawRect(178, yPos + 4, 12, 7, colors.success, 3);
+    pdf.setTextColor(255, 255, 255);
+    pdf.text(currentStudentData.overallGrade, 184, yPos + 8, { align: 'center' });
+    
+    // Attendance with visual indicator
+    pdf.setTextColor(hexToRgb(colors.text).r, hexToRgb(colors.text).g, hexToRgb(colors.text).b);
+    pdf.text(`Attendance:`, 150, yPos + 16);
+    
+    // Attendance indicator
+    const attendanceColor = currentStudentData.attendance > 90 ? colors.success : 
+                           currentStudentData.attendance > 75 ? colors.warning : colors.danger;
+    drawRect(178, yPos + 12, 17, 7, attendanceColor, 3);
+    pdf.setTextColor(255, 255, 255);
+    pdf.text(`${currentStudentData.attendance}%`, 187, yPos + 16, { align: 'center' });
     
     yPos += 35;
+    
+    // PERFORMANCE SUMMARY
+    setTextStyle(fonts.subheading);
+    pdf.setTextColor(hexToRgb(colors.primary).r, hexToRgb(colors.primary).g, hexToRgb(colors.primary).b);
+    pdf.text('PERFORMANCE SUMMARY', 10, yPos);
+    
+    // Professional separator
+    pdf.setDrawColor(hexToRgb(colors.tertiary).r, hexToRgb(colors.tertiary).g, hexToRgb(colors.tertiary).b);
+    pdf.line(10, yPos + 2, pageWidth - 10, yPos + 2);
+    
+    yPos += 10;
+    
+    // Summary text with professional formatting
+    setTextStyle(fonts.normal);
+    pdf.setTextColor(hexToRgb(colors.text).r, hexToRgb(colors.text).g, hexToRgb(colors.text).b);
+    
+    const overallProgress = Object.values(currentStudentData.subjects).reduce(
+      (sum, subject) => sum + subject.progress, 0
+    ) / Object.values(currentStudentData.subjects).length;
+    
+    const totalExperiments = Object.values(currentStudentData.subjects).reduce(
+      (sum, subject) => sum + subject.experiments, 0
+    );
+    
+    // Professional summary paragraph
+    pdf.text(`${student.name} demonstrates ${overallProgress >= 90 ? 'excellent' : overallProgress >= 80 ? 'strong' : 'satisfactory'} proficiency across all scientific disciplines with an overall performance level of ${overallProgress.toFixed(1)}%. The student has successfully completed ${totalExperiments} laboratory experiments this academic year, showing particular strength in ${getStrongestSubject(currentStudentData.subjects)}.`, 15, yPos, {
+      maxWidth: pageWidth - 30,
+      align: 'justify'
+    });
+    
+    yPos += 15;
+    
+    // Helper function to find strongest subject
+    function getStrongestSubject(subjects: any) {
+      return Object.entries(subjects).reduce((max, [subject, data]) => {
+        return (data as any).progress > (subjects[max] as any).progress ? subject : max;
+      }, Object.keys(subjects)[0]);
+    }
     
     // KEY PERFORMANCE INDICATORS
     setTextStyle(fonts.subheading);
     pdf.setTextColor(hexToRgb(colors.primary).r, hexToRgb(colors.primary).g, hexToRgb(colors.primary).b);
     pdf.text('KEY PERFORMANCE INDICATORS', 10, yPos);
     
-    // Horizontal separator
+    // Professional separator
     pdf.setDrawColor(hexToRgb(colors.tertiary).r, hexToRgb(colors.tertiary).g, hexToRgb(colors.tertiary).b);
     pdf.line(10, yPos + 2, pageWidth - 10, yPos + 2);
     
     yPos += 10;
     
-    // Subject performance indicators
+    // Subject performance indicators with professional styling
     const subjects = Object.entries(currentStudentData.subjects);
     const subjectColors = {
-      physics: colors.secondary,
-      chemistry: colors.tertiary,
-      biology: colors.success
+      physics: colors.physics,
+      chemistry: colors.chemistry,
+      biology: colors.biology
     };
     
     subjects.forEach(([subject, data], index) => {
@@ -295,17 +377,21 @@ const Admin = () => {
       const barWidth = (pageWidth - 70) * 0.8;
       const barY = yPos + (index * 20);
       
-      // Subject label
+      // Subject label with icons
       setTextStyle(fonts.normal);
       pdf.setTextColor(hexToRgb(colors.text).r, hexToRgb(colors.text).g, hexToRgb(colors.text).b);
-      pdf.text(subject.charAt(0).toUpperCase() + subject.slice(1), 15, barY + 5);
+      
+      // Draw subject icon placeholder
+      const iconSize = 7;
+      drawRect(15, barY + 0.5, iconSize, iconSize, subjectColors[subject as keyof typeof subjectColors], 2);
+      pdf.text(subject.charAt(0).toUpperCase() + subject.slice(1), 25, barY + 5);
       
       // Background bar (light gray)
       drawRect(50, barY, barWidth, barHeight, colors.border, 3);
       
-      // Progress bar
+      // Progress bar with professional styling
       const progressWidth = (data.progress / 100) * barWidth;
-      drawRect(50, barY, progressWidth, barHeight, subjectColors[subject], 3);
+      drawRect(50, barY, progressWidth, barHeight, subjectColors[subject as keyof typeof subjectColors], 3);
       
       // Percentage text
       setTextStyle(fonts.small);
@@ -314,31 +400,37 @@ const Admin = () => {
         pdf.text(`${data.progress}%`, 55, barY + 8);
       }
       
-      // Grade badge
+      // Grade badge with professional styling
       const gradeX = 50 + barWidth + 10;
-      drawRect(gradeX, barY, 15, barHeight, subjectColors[subject], 3);
+      drawRect(gradeX, barY, 15, barHeight, subjectColors[subject as keyof typeof subjectColors], 3);
       pdf.text(data.grade, gradeX + 7.5, barY + 8, { align: 'center' });
       
-      // Experiments count
+      // Experiments count with icon
       pdf.setTextColor(hexToRgb(colors.subtext).r, hexToRgb(colors.subtext).g, hexToRgb(colors.subtext).b);
-      pdf.text(`${data.experiments} experiments completed`, gradeX + 25, barY + 8);
+      
+      // Draw beaker icon placeholder
+      const beakerX = gradeX + 20;
+      const beakerSize = 5;
+      drawRect(beakerX, barY + 3.5, beakerSize, beakerSize, colors.subtext, 1);
+      
+      pdf.text(`${data.experiments} experiments completed`, beakerX + 7, barY + 8);
     });
     
     yPos += subjects.length * 20 + 10;
     
-    // Monthly performance chart
+    // MONTHLY PERFORMANCE TRENDS
     setTextStyle(fonts.subheading);
     pdf.setTextColor(hexToRgb(colors.primary).r, hexToRgb(colors.primary).g, hexToRgb(colors.primary).b);
     pdf.text('MONTHLY PERFORMANCE TRENDS', 10, yPos);
     
-    // Horizontal separator
+    // Professional separator
     pdf.setDrawColor(hexToRgb(colors.tertiary).r, hexToRgb(colors.tertiary).g, hexToRgb(colors.tertiary).b);
     pdf.line(10, yPos + 2, pageWidth - 10, yPos + 2);
     
     yPos += 10;
     
-    // Chart container
-    drawRect(10, yPos, pageWidth - 20, 60, colors.lightBg, 3);
+    // Chart container with professional styling
+    drawRect(10, yPos, pageWidth - 20, 60, colors.lightBg, 5);
     
     // Manually create a simple chart visualization
     const chartData = studentData.slice(-6);
@@ -346,20 +438,37 @@ const Admin = () => {
     const chartHeight = 40;
     const barWidth = chartWidth / (chartData.length * 3 + 2);
     
-    // Chart axes
+    // Chart axes with professional styling
     pdf.setDrawColor(hexToRgb(colors.subtext).r, hexToRgb(colors.subtext).g, hexToRgb(colors.subtext).b);
     pdf.setLineWidth(0.5);
+    
+    // X and Y axes
     pdf.line(20, yPos + 50, 20 + chartWidth, yPos + 50); // X-axis
     pdf.line(20, yPos + 10, 20, yPos + 50); // Y-axis
     
-    // Chart title and legend
+    // Chart title and legend with professional styling
     setTextStyle(fonts.small);
     pdf.setTextColor(hexToRgb(colors.text).r, hexToRgb(colors.text).g, hexToRgb(colors.text).b);
     
-    // Draw legend
-    const legendColors = [colors.secondary, colors.tertiary, colors.success];
+    // Draw professional legend
+    const legendColors = [colors.physics, colors.chemistry, colors.biology];
     const legendLabels = ['Physics', 'Chemistry', 'Biology'];
     
+    // Add horizontal gridlines for better readability
+    pdf.setDrawColor(230, 230, 230);
+    pdf.setLineWidth(0.2);
+    for (let i = 0; i <= 4; i++) {
+      const yLevel = yPos + 50 - (i * 10);
+      pdf.setLineDashPattern([1, 1], 0);
+      pdf.line(20, yLevel, 20 + chartWidth, yLevel);
+      
+      // Add value labels on Y-axis
+      pdf.setTextColor(hexToRgb(colors.subtext).r, hexToRgb(colors.subtext).g, hexToRgb(colors.subtext).b);
+      pdf.text(`${70 + i*10}`, 15, yLevel, { align: 'right' });
+    }
+    pdf.setLineDashPattern([], 0);
+    
+    // Professional legend with colored boxes
     legendLabels.forEach((label, index) => {
       const legendX = 30 + (index * 50);
       const colorBoxSize = 5;
@@ -367,64 +476,72 @@ const Admin = () => {
       pdf.text(label, legendX + colorBoxSize + 3, yPos + 9);
     });
     
-    // Draw bars
+    // Draw bars with professional styling
     chartData.forEach((data, monthIndex) => {
       const monthX = 20 + (monthIndex * ((chartWidth) / chartData.length));
       
-      // Month label below X-axis
+      // Month label below X-axis with professional styling
+      pdf.setTextColor(hexToRgb(colors.text).r, hexToRgb(colors.text).g, hexToRgb(colors.text).b);
       pdf.text(data.month, monthX + (chartWidth / chartData.length / 2), yPos + 55, { align: 'center' });
       
       // Subject bars
       const subjectKeys = ['physics', 'chemistry', 'biology'];
       
       subjectKeys.forEach((subject, subjectIndex) => {
-        const value = data[subject];
+        const value = data[subject as keyof typeof data];
         const normalizedValue = (value - 70) / 30 * chartHeight; // Scale values between 70-100
         const barX = monthX + (subjectIndex * barWidth) + 5;
         
-        drawRect(barX, yPos + 50 - normalizedValue, barWidth - 2, normalizedValue, legendColors[subjectIndex]);
+        // Draw professional styled bars
+        drawRect(barX, yPos + 50 - normalizedValue, barWidth - 2, normalizedValue, legendColors[subjectIndex], 2);
+        
+        // Add data point values above bars
+        setTextStyle(fonts.tiny);
+        pdf.setTextColor(hexToRgb(colors.text).r, hexToRgb(colors.text).g, hexToRgb(colors.text).b);
+        pdf.text(value.toString(), barX + (barWidth-2)/2, yPos + 47 - normalizedValue, { align: 'center' });
       });
     });
     
     yPos += 70;
     
-    // RECENT ACTIVITIES
+    // RECENT LABORATORY ACTIVITIES - Professional section
     setTextStyle(fonts.subheading);
     pdf.setTextColor(hexToRgb(colors.primary).r, hexToRgb(colors.primary).g, hexToRgb(colors.primary).b);
     pdf.text('RECENT LABORATORY ACTIVITIES', 10, yPos);
     
-    // Horizontal separator
+    // Professional separator
     pdf.setDrawColor(hexToRgb(colors.tertiary).r, hexToRgb(colors.tertiary).g, hexToRgb(colors.tertiary).b);
     pdf.line(10, yPos + 2, pageWidth - 10, yPos + 2);
     
     yPos += 10;
     
-    // Activities table
+    // Activities table with professional styling
     const activities = currentStudentData.recentActivity;
     
-    // Table headers
+    // Table headers with professional styling
     const colWidths = [40, pageWidth - 90, 30];
     const rowHeight = 10;
     
-    // Header row
-    drawRect(10, yPos, pageWidth - 20, rowHeight, colors.primary);
+    // Header row with professional gradient
+    pdf.setFillColor(hexToRgb(colors.primary).r, hexToRgb(colors.primary).g, hexToRgb(colors.primary).b);
+    pdf.rect(10, yPos, pageWidth - 20, rowHeight, 'F');
     
     setTextStyle(fonts.small);
     pdf.setTextColor(255, 255, 255);
     pdf.text('Date', 15, yPos + 7);
     pdf.text('Experiment', 55, yPos + 7);
-    pdf.text('Score', pageWidth - 25, yPos + 7);
+    pdf.text('Score', pageWidth - 25, yPos + 7, { align: 'center' });
     
     yPos += rowHeight;
     
-    // Activity rows
+    // Activity rows with alternating colors for readability
     activities.forEach((activity, index) => {
       const isAlternate = index % 2 === 0;
       drawRect(10, yPos, pageWidth - 20, rowHeight, isAlternate ? colors.lightBg : colors.background);
       
       pdf.setTextColor(hexToRgb(colors.text).r, hexToRgb(colors.text).g, hexToRgb(colors.text).b);
       
-      // Format date
+      // Format date in professional style
       const formattedDate = new Date(activity.date).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
@@ -432,9 +549,25 @@ const Admin = () => {
       });
       
       pdf.text(formattedDate, 15, yPos + 7);
-      pdf.text(activity.experiment, 55, yPos + 7);
       
-      // Score with color coding
+      // Add experiment icons next to names
+      const experimentType = activity.experiment.toLowerCase();
+      let iconColor = colors.primary;
+      
+      if (experimentType.includes("acid") || experimentType.includes("titration") || experimentType.includes("chemical"))
+        iconColor = colors.chemistry;
+      else if (experimentType.includes("photo") || experimentType.includes("cell") || experimentType.includes("plant"))
+        iconColor = colors.biology;
+      else if (experimentType.includes("ohm") || experimentType.includes("force") || experimentType.includes("motion"))
+        iconColor = colors.physics;
+      
+      // Draw small experiment icon placeholder
+      const iconSize = 5;
+      drawRect(55, yPos + 2, iconSize, iconSize, iconColor, 1);
+      
+      pdf.text(activity.experiment, 62, yPos + 7);
+      
+      // Score with color-coded badge
       let scoreColor = colors.success;
       if (activity.score < 85) scoreColor = colors.warning;
       if (activity.score < 70) scoreColor = colors.danger;
@@ -453,49 +586,240 @@ const Admin = () => {
     pdf.setTextColor(hexToRgb(colors.primary).r, hexToRgb(colors.primary).g, hexToRgb(colors.primary).b);
     pdf.text('RECOMMENDATIONS & NEXT STEPS', 10, yPos);
     
-    // Horizontal separator
+    // Professional separator
     pdf.setDrawColor(hexToRgb(colors.tertiary).r, hexToRgb(colors.tertiary).g, hexToRgb(colors.tertiary).b);
     pdf.line(10, yPos + 2, pageWidth - 10, yPos + 2);
     
     yPos += 10;
     
-    // Recommendations box
-    drawRect(10, yPos, pageWidth - 20, 40, colors.lightBg, 3);
+    // Recommendations box with professional styling
+    drawRect(10, yPos, pageWidth - 20, 40, colors.lightBg, 5);
     
     setTextStyle(fonts.normal);
     pdf.setTextColor(hexToRgb(colors.text).r, hexToRgb(colors.text).g, hexToRgb(colors.text).b);
     
+    // Personalized recommendations based on student data
+    const strongestSubject = getStrongestSubject(currentStudentData.subjects);
+    const weakestSubject = Object.entries(currentStudentData.subjects).reduce((min, [subject, data]) => {
+      return (data as any).progress < (currentStudentData.subjects[min] as any).progress ? subject : min;
+    }, Object.keys(currentStudentData.subjects)[0]);
+    
     const recommendations = [
-      'Focus on reinforcing theoretical concepts behind laboratory experiments',
-      'Complete the remaining experiments in the chemistry module',
-      'Continue excellent work in biology practical applications',
-      'Participate in upcoming science competition to showcase skills'
+      `Continue excellent work in ${strongestSubject} with advanced experiments`,
+      `Focus additional time on ${weakestSubject} concepts and laboratory work`,
+      `Complete the remaining experiments in all scientific modules`,
+      `Consider joining the upcoming science competition to showcase skills`
     ];
     
     recommendations.forEach((rec, index) => {
-      pdf.text(`• ${rec}`, 15, yPos + 10 + (index * 8));
+      // Draw bullet points with colored circles
+      const bulletX = 15;
+      const bulletY = yPos + 10 + (index * 8);
+      const bulletSize = 3;
+      
+      // Alternating colors for bullet points
+      const bulletColors = [colors.physics, colors.chemistry, colors.biology, colors.quaternary];
+      drawRect(bulletX, bulletY - 2, bulletSize, bulletSize, bulletColors[index % bulletColors.length], 1.5);
+      
+      pdf.text(`${rec}`, bulletX + 5, bulletY);
     });
     
     yPos += 50;
     
-    // FOOTER
-    const footerHeight = 15;
-    drawRect(0, pageHeight - footerHeight, pageWidth, footerHeight, colors.primary);
+    // SKILLS ASSESSMENT SUMMARY
+    setTextStyle(fonts.subheading);
+    pdf.setTextColor(hexToRgb(colors.primary).r, hexToRgb(colors.primary).g, hexToRgb(colors.primary).b);
+    pdf.text('SKILLS ASSESSMENT', 10, yPos);
     
+    // Professional separator
+    pdf.setDrawColor(hexToRgb(colors.tertiary).r, hexToRgb(colors.tertiary).g, hexToRgb(colors.tertiary).b);
+    pdf.line(10, yPos + 2, pageWidth - 10, yPos + 2);
+    
+    yPos += 10;
+    
+    // Simple skills visualization
+    const skills = [
+      { name: "Theoretical Knowledge", value: 85 },
+      { name: "Practical Application", value: 92 },
+      { name: "Laboratory Safety", value: 98 },
+      { name: "Scientific Communication", value: 88 },
+      { name: "Data Analysis", value: 90 }
+    ];
+    
+    // Skills visualization with horizontal bars
+    skills.forEach((skill, index) => {
+      const skillY = yPos + (index * 12);
+      
+      // Skill name
+      setTextStyle(fonts.small);
+      pdf.setTextColor(hexToRgb(colors.text).r, hexToRgb(colors.text).g, hexToRgb(colors.text).b);
+      pdf.text(skill.name, 15, skillY + 5);
+      
+      // Skill bar background
+      const barX = 80;
+      const barWidth = 80;
+      const barHeight = 6;
+      drawRect(barX, skillY, barWidth, barHeight, colors.border, 3);
+      
+      // Skill progress with gradient
+      const progressWidth = (skill.value / 100) * barWidth;
+      
+      // Create gradient effect for skill bars
+      const gradientSteps = 5;
+      const stepWidth = progressWidth / gradientSteps;
+      const baseColor = index % 2 === 0 ? colors.secondary : colors.quaternary;
+      const endColor = index % 2 === 0 ? colors.tertiary : colors.physics;
+      
+      for (let step = 0; step < gradientSteps; step++) {
+        // Calculate color for this segment of the gradient
+        const ratio = step / (gradientSteps - 1);
+        const r1 = hexToRgb(baseColor).r;
+        const g1 = hexToRgb(baseColor).g;
+        const b1 = hexToRgb(baseColor).b;
+        const r2 = hexToRgb(endColor).r;
+        const g2 = hexToRgb(endColor).g;
+        const b2 = hexToRgb(endColor).b;
+        
+        const r = Math.round(r1 + (r2 - r1) * ratio);
+        const g = Math.round(g1 + (g2 - g1) * ratio);
+        const b = Math.round(b1 + (b2 - b1) * ratio);
+        
+        const gradientColor = `rgb(${r},${g},${b})`;
+        
+        // Draw this segment of the gradient bar
+        pdf.setFillColor(r, g, b);
+        
+        if (step === gradientSteps - 1) {
+          // Last segment gets rounded corners on right side
+          pdf.roundedRect(
+            barX + (step * stepWidth), 
+            skillY, 
+            stepWidth, 
+            barHeight, 
+            0, 0, 3, 3, 
+            'F'
+          );
+        } else if (step === 0) {
+          // First segment gets rounded corners on left side
+          pdf.roundedRect(
+            barX + (step * stepWidth), 
+            skillY, 
+            stepWidth, 
+            barHeight, 
+            3, 3, 0, 0, 
+            'F'
+          );
+        } else {
+          // Middle segments get no rounded corners
+          pdf.rect(barX + (step * stepWidth), skillY, stepWidth, barHeight, 'F');
+        }
+      }
+      
+      // Skill percentage
+      setTextStyle(fonts.small);
+      pdf.setTextColor(hexToRgb(colors.text).r, hexToRgb(colors.text).g, hexToRgb(colors.text).b);
+      pdf.text(`${skill.value}%`, barX + barWidth + 5, skillY + 5);
+    });
+    
+    yPos += skills.length * 12 + 10;
+    
+    // FUTURE LEARNING PATHWAY
+    setTextStyle(fonts.subheading);
+    pdf.setTextColor(hexToRgb(colors.primary).r, hexToRgb(colors.primary).g, hexToRgb(colors.primary).b);
+    pdf.text('FUTURE LEARNING PATHWAY', 10, yPos);
+    
+    // Professional separator
+    pdf.setDrawColor(hexToRgb(colors.tertiary).r, hexToRgb(colors.tertiary).g, hexToRgb(colors.tertiary).b);
+    pdf.line(10, yPos + 2, pageWidth - 10, yPos + 2);
+    
+    yPos += 10;
+    
+    // Learning pathway visualization
+    const pathwayBoxWidth = (pageWidth - 40) / 3;
+    const pathwayBoxHeight = 35;
+    
+    const pathways = [
+      { title: "Core Concepts", content: "Complete remaining fundamental experiments in all science subjects", color: colors.physics },
+      { title: "Advanced Applications", content: "Focus on cross-disciplinary experiments combining multiple science fields", color: colors.chemistry },
+      { title: "Research Projects", content: "Design and execute original scientific investigations", color: colors.biology }
+    ];
+    
+    pathways.forEach((pathway, index) => {
+      const boxX = 10 + (index * (pathwayBoxWidth + 10));
+      
+      // Pathway box with gradient background
+      drawRect(boxX, yPos, pathwayBoxWidth, pathwayBoxHeight, pathway.color, 5);
+      
+      // White transparent overlay for text area
+      pdf.setFillColor(255, 255, 255, 0.85);
+      pdf.roundedRect(boxX + 2, yPos + 2, pathwayBoxWidth - 4, pathwayBoxHeight - 4, 3, 3, 'F');
+      
+      // Pathway title
+      setTextStyle(fonts.normal);
+      pdf.setTextColor(hexToRgb(pathway.color).r, hexToRgb(pathway.color).g, hexToRgb(pathway.color).b);
+      pdf.text(pathway.title, boxX + pathwayBoxWidth/2, yPos + 10, { align: 'center' });
+      
+      // Pathway content
+      setTextStyle(fonts.small);
+      pdf.setTextColor(hexToRgb(colors.text).r, hexToRgb(colors.text).g, hexToRgb(colors.text).b);
+      pdf.text(pathway.content, boxX + 5, yPos + 18, { maxWidth: pathwayBoxWidth - 10, align: 'center' });
+      
+      // Connection arrows between boxes (if not the last box)
+      if (index < pathways.length - 1) {
+        // Draw arrow
+        const arrowX = boxX + pathwayBoxWidth;
+        const arrowY = yPos + pathwayBoxHeight/2;
+        
+        pdf.setDrawColor(hexToRgb(colors.tertiary).r, hexToRgb(colors.tertiary).g, hexToRgb(colors.tertiary).b);
+        pdf.setLineWidth(0.7);
+        
+        // Arrow line
+        pdf.line(arrowX + 2, arrowY, arrowX + 8, arrowY);
+        
+        // Arrow head
+        pdf.line(arrowX + 6, arrowY - 2, arrowX + 8, arrowY);
+        pdf.line(arrowX + 6, arrowY + 2, arrowX + 8, arrowY);
+      }
+    });
+    
+    yPos += pathwayBoxHeight + 15;
+    
+    // Add professional footer
+    const footerHeight = 18;
+    
+    // Footer gradient
+    const footerGradientColors = gradientColors.slice().reverse();
+    footerGradientColors.forEach((color, index, array) => {
+      const segmentHeight = footerHeight / array.length;
+      const y = pageHeight - footerHeight + (index * segmentHeight);
+      drawRect(0, y, pageWidth, segmentHeight, color);
+    });
+    
+    // Footer content
     setTextStyle(fonts.small);
     pdf.setTextColor(255, 255, 255);
-    pdf.text('OLabs Educational Platform | Advancing Science Through Virtual Experimentation', pageWidth / 2, pageHeight - 5, { align: 'center' });
+    pdf.text('OLabs Educational Platform | Advancing Science Through Virtual Experimentation', pageWidth / 2, pageHeight - 10, { align: 'center' });
     
-    // Add page number
-    pdf.text(`Page 1 of 1 | Report ID: OL-${Date.now().toString().slice(-8)}`, pageWidth - 15, pageHeight - 10, { align: 'right' });
+    // Add page number and report ID
+    const reportId = `OL-${Date.now().toString().slice(-8)}`;
+    pdf.text(`Page 1 of 1 | Report ID: ${reportId}`, pageWidth - 15, pageHeight - 5, { align: 'right' });
     
-    // Save the PDF
-    const fileName = `OLabs_${student.name.replace(/\s+/g, '_')}_Scientific_Report.pdf`;
+    // Legal disclaimer
+    setTextStyle(fonts.tiny);
+    pdf.text('This report is generated based on student activity data in OLabs virtual experiments. © 2024 OLabs Educational Technologies', 15, pageHeight - 5);
+    
+    // QR code placeholder for digital verification
+    const qrSize = 10;
+    drawRect(10, pageHeight - footerHeight + 4, qrSize, qrSize, '#FFFFFF', 0);
+    
+    // Save the PDF with professionally named file
+    const academicYear = '2023-2024';
+    const fileName = `OLabs_${student.name.replace(/\s+/g, '_')}_Scientific_Report_${academicYear}.pdf`;
     pdf.save(fileName);
     
     toast({
-      title: "Report Generated",
-      description: "Professional scientific performance report has been downloaded",
+      title: "Professional Report Generated",
+      description: "Scientific performance report has been downloaded",
     });
   };
 
