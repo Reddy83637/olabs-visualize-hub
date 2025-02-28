@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, RadialBarChart, RadialBar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
@@ -6,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Download, ChevronDown } from "lucide-react";
+import { Download, ChevronDown, Award, BookOpen, GraduationCap, BarChart3, PieChart as PieChartIcon, LineChart as LineChartIcon, Activity, Users } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import jsPDF from 'jspdf';
 import { useNavigate } from "react-router-dom";
@@ -299,7 +300,7 @@ const Admin = () => {
 
   return (
     <div 
-      className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 p-4 md:p-8"
+      className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-100 p-4 md:p-8"
       style={{
         backgroundImage: `
           radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.5)),
@@ -316,17 +317,18 @@ const Admin = () => {
         transition={{ duration: 0.5 }}
         className="max-w-[1920px] mx-auto space-y-6 md:space-y-8"
       >
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-8 backdrop-blur-sm bg-white/30 p-6 rounded-xl shadow-lg border border-white/50">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
             className="space-y-2"
           >
-            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
               Student Analytics Dashboard
             </h1>
-            <p className="text-gray-600 text-sm md:text-base">
+            <p className="text-gray-700 text-sm md:text-base flex items-center">
+              <GraduationCap className="mr-2 h-5 w-5 text-indigo-500" />
               Track individual student performance and engagement metrics
             </p>
           </motion.div>
@@ -337,7 +339,7 @@ const Admin = () => {
           >
             <Button
               onClick={handleDownloadReport}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg transition-all duration-300 w-full md:w-auto"
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg transition-all duration-300 w-full md:w-auto"
             >
               <Download className="mr-2 h-4 w-4" />
               Download Report
@@ -349,30 +351,48 @@ const Admin = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
+          className="backdrop-blur-sm bg-white/30 p-6 rounded-xl shadow-lg border border-white/50"
         >
           <Tabs defaultValue="9" value={selectedGrade} onValueChange={setSelectedGrade} className="w-full">
-            <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full md:w-[400px] bg-white/50 backdrop-blur-sm">
-              <TabsTrigger value="9">Grade 9</TabsTrigger>
-              <TabsTrigger value="10">Grade 10</TabsTrigger>
-              <TabsTrigger value="11">Grade 11</TabsTrigger>
-              <TabsTrigger value="12">Grade 12</TabsTrigger>
-            </TabsList>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+              <div className="flex items-center mb-4 md:mb-0">
+                <Users className="h-6 w-6 mr-2 text-purple-600" />
+                <h2 className="text-xl font-semibold text-gray-800">Select Grade Level</h2>
+              </div>
+              <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full md:w-[400px] bg-white/50 backdrop-blur-sm rounded-lg">
+                <TabsTrigger value="9" className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white">
+                  Grade 9
+                </TabsTrigger>
+                <TabsTrigger value="10" className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white">
+                  Grade 10
+                </TabsTrigger>
+                <TabsTrigger value="11" className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white">
+                  Grade 11
+                </TabsTrigger>
+                <TabsTrigger value="12" className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white">
+                  Grade 12
+                </TabsTrigger>
+              </TabsList>
+            </div>
             
             <AnimatePresence mode="wait">
               {Object.entries(students).map(([grade, gradeStudents]) => (
                 <TabsContent key={grade} value={grade}>
-                  <Card className="backdrop-blur-sm bg-white/50 border border-white/20 shadow-lg">
-                    <CardHeader>
-                      <CardTitle className="text-xl text-gray-800">Grade {grade} Students</CardTitle>
+                  <Card className="backdrop-blur-sm bg-white/50 border border-white/20 shadow-lg overflow-hidden">
+                    <CardHeader className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-b border-white/20">
+                      <CardTitle className="text-xl text-gray-800 flex items-center">
+                        <Award className="h-5 w-5 mr-2 text-purple-600" />
+                        Grade {grade} Students
+                      </CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-6">
                       <Select value={selectedStudent} onValueChange={handleStudentChange}>
-                        <SelectTrigger className="w-full md:w-[280px] bg-white">
+                        <SelectTrigger className="w-full md:w-[280px] bg-white border border-indigo-100 hover:border-indigo-300 transition-colors">
                           <SelectValue placeholder="Select a student" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-white border border-indigo-100">
                           {gradeStudents.map((student) => (
-                            <SelectItem key={student.id} value={student.id.toString()}>
+                            <SelectItem key={student.id} value={student.id.toString()} className="hover:bg-indigo-50">
                               {student.name} - Section {student.section}
                             </SelectItem>
                           ))}
@@ -403,32 +423,50 @@ const Admin = () => {
                     transition={{ delay: index * 0.1 }}
                     whileHover={{ scale: 1.02, translateY: -5 }}
                     whileTap={{ scale: 0.98 }}
+                    className="overflow-hidden"
                   >
                     <Card 
-                      className={`cursor-pointer transition-all duration-300 hover:shadow-xl backdrop-blur-sm bg-white/50 border border-white/20 ${
-                        selectedSubject === subject ? 'ring-2 ring-purple-500 shadow-lg bg-purple-50/50' : ''
+                      className={`cursor-pointer transition-all duration-300 hover:shadow-xl backdrop-blur-sm border border-white/20 h-full ${
+                        selectedSubject === subject 
+                          ? 'ring-2 ring-purple-500 shadow-lg bg-gradient-to-br from-indigo-50 to-purple-50' 
+                          : 'bg-white/50 hover:bg-white/70'
                       }`}
                       onClick={() => handleSubjectClick(subject)}
                     >
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-gray-500 uppercase">
+                      <CardHeader className={`pb-2 ${selectedSubject === subject ? 'bg-gradient-to-r from-indigo-500/20 to-purple-500/20' : ''}`}>
+                        <CardTitle className="text-sm font-medium text-gray-500 uppercase flex items-center">
+                          {subject === 'physics' && <Activity className="h-4 w-4 mr-1 text-indigo-600" />}
+                          {subject === 'chemistry' && <BookOpen className="h-4 w-4 mr-1 text-indigo-600" />}
+                          {subject === 'biology' && <Award className="h-4 w-4 mr-1 text-indigo-600" />}
                           {subject}
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                        <div className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                           {data.grade}
                         </div>
-                        <p className="text-gray-600 text-sm mt-1">Progress: {data.progress}%</p>
+                        <p className="text-gray-700 text-sm mt-1 flex items-center">
+                          <BarChart3 className="h-3 w-3 mr-1 text-indigo-500" />
+                          Progress: {data.progress}%
+                        </p>
                         <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
                           <motion.div 
-                            className="h-full bg-gradient-to-r from-purple-600 to-blue-600"
+                            className={`h-full rounded-full ${
+                              subject === 'physics' 
+                                ? 'bg-gradient-to-r from-indigo-500 to-indigo-600' 
+                                : subject === 'chemistry' 
+                                ? 'bg-gradient-to-r from-purple-500 to-purple-600' 
+                                : 'bg-gradient-to-r from-blue-500 to-blue-600'
+                            }`}
                             initial={{ width: 0 }}
                             animate={{ width: `${data.progress}%` }}
                             transition={{ duration: 1, ease: "easeOut" }}
                           />
                         </div>
-                        <p className="text-purple-600 text-sm mt-2">Experiments: {data.experiments}</p>
+                        <p className="text-indigo-600 text-sm mt-2 flex items-center">
+                          <BookOpen className="h-3 w-3 mr-1" />
+                          Experiments: {data.experiments}
+                        </p>
                       </CardContent>
                     </Card>
                   </motion.div>
@@ -436,11 +474,14 @@ const Admin = () => {
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-                <Card className="col-span-1 lg:col-span-2 backdrop-blur-sm bg-white/50 border border-white/20 shadow-lg">
-                  <CardHeader>
-                    <CardTitle className="text-xl text-gray-800">Recent Activity</CardTitle>
+                <Card className="col-span-1 lg:col-span-2 backdrop-blur-sm bg-white/50 border border-white/20 shadow-lg overflow-hidden">
+                  <CardHeader className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-b border-white/20">
+                    <CardTitle className="text-xl text-gray-800 flex items-center">
+                      <Activity className="h-5 w-5 mr-2 text-purple-600" />
+                      Recent Activity
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-6">
                     <div className="space-y-4">
                       {currentStudent.recentActivity.map((activity, index) => (
                         <motion.div
@@ -448,16 +489,29 @@ const Admin = () => {
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: index * 0.1 }}
-                          className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-white/70 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 gap-2 md:gap-4"
+                          className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-white/70 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 gap-2 md:gap-4 border border-indigo-50"
                         >
-                          <div>
-                            <p className="font-medium text-gray-800">{activity.experiment}</p>
-                            <p className="text-sm text-gray-500">{activity.date}</p>
+                          <div className="flex items-center">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
+                              index === 0 
+                                ? 'bg-indigo-100 text-indigo-600' 
+                                : index === 1 
+                                ? 'bg-purple-100 text-purple-600' 
+                                : 'bg-blue-100 text-blue-600'
+                            }`}>
+                              {index === 0 && <Activity className="h-5 w-5" />}
+                              {index === 1 && <BookOpen className="h-5 w-5" />}
+                              {index === 2 && <Award className="h-5 w-5" />}
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-800">{activity.experiment}</p>
+                              <p className="text-sm text-gray-500">{activity.date}</p>
+                            </div>
                           </div>
                           <div className={`text-lg font-semibold px-4 py-1 rounded-full ${
-                            activity.score >= 90 ? 'bg-green-100 text-green-600' :
-                            activity.score >= 75 ? 'bg-blue-100 text-blue-600' :
-                            'bg-red-100 text-red-600'
+                            activity.score >= 90 ? 'bg-green-100 text-green-600 border border-green-200' :
+                            activity.score >= 75 ? 'bg-blue-100 text-blue-600 border border-blue-200' :
+                            'bg-red-100 text-red-600 border border-red-200'
                           }`}>
                             {activity.score}%
                           </div>
@@ -467,41 +521,82 @@ const Admin = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="backdrop-blur-sm bg-white/50 border border-white/20 shadow-lg">
-                  <CardHeader>
-                    <CardTitle className="text-xl text-gray-800">Subject Performance Trends</CardTitle>
+                <Card className="backdrop-blur-sm bg-white/50 border border-white/20 shadow-lg overflow-hidden">
+                  <CardHeader className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-b border-white/20">
+                    <CardTitle className="text-xl text-gray-800 flex items-center">
+                      <LineChartIcon className="h-5 w-5 mr-2 text-purple-600" />
+                      Subject Performance Trends
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent className="h-[300px]" ref={chartRefs.performance}>
+                  <CardContent className="h-[300px] p-6" ref={chartRefs.performance}>
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={studentData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
                         <XAxis dataKey="month" stroke="#666" />
                         <YAxis stroke="#666" />
-                        <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.9)' }} />
+                        <Tooltip 
+                          contentStyle={{ 
+                            background: 'rgba(255,255,255,0.9)', 
+                            borderRadius: '8px', 
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                            border: '1px solid rgba(148,163,184,0.2)'
+                          }} 
+                        />
                         <Legend />
-                        <Line type="monotone" dataKey="physics" stroke="#8b5cf6" strokeWidth={2} />
-                        <Line type="monotone" dataKey="chemistry" stroke="#3b82f6" strokeWidth={2} />
-                        <Line type="monotone" dataKey="biology" stroke="#10b981" strokeWidth={2} />
+                        <Line 
+                          type="monotone" 
+                          dataKey="physics" 
+                          stroke="#8b5cf6" 
+                          strokeWidth={3}
+                          dot={{ fill: '#8b5cf6', r: 4 }}
+                          activeDot={{ r: 6, fill: '#8b5cf6', stroke: 'white', strokeWidth: 2 }}
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="chemistry" 
+                          stroke="#3b82f6" 
+                          strokeWidth={3}
+                          dot={{ fill: '#3b82f6', r: 4 }}
+                          activeDot={{ r: 6, fill: '#3b82f6', stroke: 'white', strokeWidth: 2 }}
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="biology" 
+                          stroke="#10b981" 
+                          strokeWidth={3}
+                          dot={{ fill: '#10b981', r: 4 }}
+                          activeDot={{ r: 6, fill: '#10b981', stroke: 'white', strokeWidth: 2 }}
+                        />
                       </LineChart>
                     </ResponsiveContainer>
                   </CardContent>
                 </Card>
 
-                <Card className="backdrop-blur-sm bg-white/50 border border-white/20 shadow-lg">
-                  <CardHeader>
-                    <CardTitle className="text-xl text-gray-800">Monthly Engagement</CardTitle>
+                <Card className="backdrop-blur-sm bg-white/50 border border-white/20 shadow-lg overflow-hidden">
+                  <CardHeader className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-b border-white/20">
+                    <CardTitle className="text-xl text-gray-800 flex items-center">
+                      <BarChart3 className="h-5 w-5 mr-2 text-purple-600" />
+                      Monthly Engagement
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent className="h-[300px]" ref={chartRefs.engagement}>
+                  <CardContent className="h-[300px] p-6" ref={chartRefs.engagement}>
                     <ResponsiveContainer width="100%" height="100%">
                       <AreaChart data={studentData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
                         <XAxis dataKey="month" stroke="#666" />
                         <YAxis stroke="#666" />
-                        <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.9)' }} />
+                        <Tooltip 
+                          contentStyle={{ 
+                            background: 'rgba(255,255,255,0.9)', 
+                            borderRadius: '8px', 
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                            border: '1px solid rgba(148,163,184,0.2)'
+                          }} 
+                        />
                         <Legend />
                         <defs>
                           <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3}/>
+                            <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.6}/>
                             <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
                           </linearGradient>
                         </defs>
@@ -509,46 +604,105 @@ const Admin = () => {
                           type="monotone" 
                           dataKey={selectedSubject}
                           stroke="#8b5cf6"
+                          strokeWidth={3}
                           fill="url(#colorGradient)"
+                          activeDot={{ r: 6, fill: '#8b5cf6', stroke: 'white', strokeWidth: 2 }}
                         />
                       </AreaChart>
                     </ResponsiveContainer>
                   </CardContent>
                 </Card>
 
-                <Card className="backdrop-blur-sm bg-white/50 border border-white/20 shadow-lg">
-                  <CardHeader>
-                    <CardTitle className="text-xl text-gray-800">Skills Assessment</CardTitle>
+                <Card className="backdrop-blur-sm bg-white/50 border border-white/20 shadow-lg overflow-hidden">
+                  <CardHeader className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-b border-white/20">
+                    <CardTitle className="text-xl text-gray-800 flex items-center">
+                      <PieChartIcon className="h-5 w-5 mr-2 text-purple-600" />
+                      Skills Assessment
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent className="h-[300px]" ref={chartRefs.skills}>
+                  <CardContent className="h-[300px] p-6" ref={chartRefs.skills}>
                     <ResponsiveContainer width="100%" height="100%">
                       <RadarChart outerRadius={90} data={skillsData}>
                         <PolarGrid stroke="rgba(0,0,0,0.1)" />
-                        <PolarAngleAxis dataKey="subject" stroke="#666" />
+                        <PolarAngleAxis dataKey="subject" stroke="#666" tick={{ fill: '#4b5563', fontSize: 12 }} />
                         <PolarRadiusAxis stroke="#666" />
-                        <Radar name="Current" dataKey="A" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.3} />
-                        <Radar name="Target" dataKey="B" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} />
-                        <Legend />
+                        <Radar 
+                          name="Current" 
+                          dataKey="A" 
+                          stroke="#8b5cf6" 
+                          fill="#8b5cf6" 
+                          fillOpacity={0.5}
+                          strokeWidth={2}
+                        />
+                        <Radar 
+                          name="Target" 
+                          dataKey="B" 
+                          stroke="#3b82f6" 
+                          fill="#3b82f6" 
+                          fillOpacity={0.4}
+                          strokeWidth={2}
+                        />
+                        <Legend 
+                          iconType="circle"
+                          wrapperStyle={{
+                            paddingTop: '10px'
+                          }}
+                        />
+                        <Tooltip 
+                          contentStyle={{ 
+                            background: 'rgba(255,255,255,0.9)', 
+                            borderRadius: '8px', 
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                            border: '1px solid rgba(148,163,184,0.2)'
+                          }} 
+                        />
                       </RadarChart>
                     </ResponsiveContainer>
                   </CardContent>
                 </Card>
 
-                <Card className="backdrop-blur-sm bg-white/50 border border-white/20 shadow-lg">
-                  <CardHeader>
-                    <CardTitle className="text-xl text-gray-800">Subject-wise Progress</CardTitle>
+                <Card className="backdrop-blur-sm bg-white/50 border border-white/20 shadow-lg overflow-hidden">
+                  <CardHeader className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-b border-white/20">
+                    <CardTitle className="text-xl text-gray-800 flex items-center">
+                      <BarChart3 className="h-5 w-5 mr-2 text-purple-600" />
+                      Subject-wise Progress
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent className="h-[300px]" ref={chartRefs.progress}>
+                  <CardContent className="h-[300px] p-6" ref={chartRefs.progress}>
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={studentData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
                         <XAxis dataKey="month" stroke="#666" />
                         <YAxis stroke="#666" />
-                        <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.9)' }} />
-                        <Legend />
-                        <Bar dataKey="physics" fill="#8b5cf6" />
-                        <Bar dataKey="chemistry" fill="#3b82f6" />
-                        <Bar dataKey="biology" fill="#10b981" />
+                        <Tooltip 
+                          contentStyle={{ 
+                            background: 'rgba(255,255,255,0.9)', 
+                            borderRadius: '8px', 
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                            border: '1px solid rgba(148,163,184,0.2)'
+                          }} 
+                        />
+                        <Legend 
+                          iconType="circle"
+                          wrapperStyle={{
+                            paddingTop: '10px'
+                          }}
+                        />
+                        <Bar 
+                          dataKey="physics" 
+                          fill="#8b5cf6"
+                          radius={[4, 4, 0, 0]}
+                        />
+                        <Bar 
+                          dataKey="chemistry" 
+                          fill="#3b82f6"
+                          radius={[4, 4, 0, 0]}
+                        />
+                        <Bar 
+                          dataKey="biology" 
+                          fill="#10b981"
+                          radius={[4, 4, 0, 0]}
+                        />
                       </BarChart>
                     </ResponsiveContainer>
                   </CardContent>
