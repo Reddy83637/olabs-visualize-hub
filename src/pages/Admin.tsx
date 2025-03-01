@@ -25,18 +25,34 @@ const students = {
   "9": [
     { id: 1, name: "Alex Johnson", grade: "9th", section: "A" },
     { id: 2, name: "Emily Brown", grade: "9th", section: "B" },
+    { id: 3, name: "Michael Chen", grade: "9th", section: "A" },
+    { id: 4, name: "Sophia Rodriguez", grade: "9th", section: "B" },
+    { id: 5, name: "Ethan Williams", grade: "9th", section: "A" },
+    { id: 6, name: "Olivia Martinez", grade: "9th", section: "B" },
   ],
   "10": [
-    { id: 3, name: "John Doe", grade: "10th", section: "A" },
-    { id: 4, name: "Jane Smith", grade: "10th", section: "B" },
+    { id: 7, name: "John Doe", grade: "10th", section: "A" },
+    { id: 8, name: "Jane Smith", grade: "10th", section: "B" },
+    { id: 9, name: "Daniel Kim", grade: "10th", section: "A" },
+    { id: 10, name: "Isabella Garcia", grade: "10th", section: "B" },
+    { id: 11, name: "James Wilson", grade: "10th", section: "A" },
+    { id: 12, name: "Ava Thompson", grade: "10th", section: "B" },
   ],
   "11": [
-    { id: 5, name: "Mike Johnson", grade: "11th", section: "A" },
-    { id: 6, name: "Sarah Williams", grade: "11th", section: "B" },
+    { id: 13, name: "Mike Johnson", grade: "11th", section: "A" },
+    { id: 14, name: "Sarah Williams", grade: "11th", section: "B" },
+    { id: 15, name: "David Lee", grade: "11th", section: "A" },
+    { id: 16, name: "Emma Davis", grade: "11th", section: "B" },
+    { id: 17, name: "Noah Clark", grade: "11th", section: "A" },
+    { id: 18, name: "Amelia Taylor", grade: "11th", section: "B" },
   ],
   "12": [
-    { id: 7, name: "Tom Wilson", grade: "12th", section: "A" },
-    { id: 8, name: "Lisa Anderson", grade: "12th", section: "B" },
+    { id: 19, name: "Tom Wilson", grade: "12th", section: "A" },
+    { id: 20, name: "Lisa Anderson", grade: "12th", section: "B" },
+    { id: 21, name: "Benjamin Wright", grade: "12th", section: "A" },
+    { id: 22, name: "Charlotte Hill", grade: "12th", section: "B" },
+    { id: 23, name: "Jacob Turner", grade: "12th", section: "A" },
+    { id: 24, name: "Mia Scott", grade: "12th", section: "B" },
   ],
 };
 
@@ -53,6 +69,328 @@ const studentDetails = {
       { date: "2024-02-01", experiment: "Ohm's Law", score: 95 },
       { date: "2024-02-05", experiment: "Acid Base Titration", score: 88 },
       { date: "2024-02-10", experiment: "Photosynthesis", score: 92 }
+    ]
+  },
+  2: {
+    attendance: 92,
+    overallGrade: "A-",
+    subjects: {
+      physics: { grade: "B+", progress: 88, experiments: 14 },
+      chemistry: { grade: "A", progress: 93, experiments: 13 },
+      biology: { grade: "A-", progress: 90, experiments: 12 }
+    },
+    recentActivity: [
+      { date: "2024-02-03", experiment: "Projectile Motion", score: 87 },
+      { date: "2024-02-08", experiment: "Organic Compounds", score: 91 },
+      { date: "2024-02-12", experiment: "Cell Structure", score: 89 }
+    ]
+  },
+  3: {
+    attendance: 97,
+    overallGrade: "A+",
+    subjects: {
+      physics: { grade: "A+", progress: 97, experiments: 16 },
+      chemistry: { grade: "A", progress: 94, experiments: 14 },
+      biology: { grade: "A+", progress: 98, experiments: 15 }
+    },
+    recentActivity: [
+      { date: "2024-02-02", experiment: "Electromagnetism", score: 98 },
+      { date: "2024-02-07", experiment: "Redox Reactions", score: 95 },
+      { date: "2024-02-13", experiment: "DNA Extraction", score: 97 }
+    ]
+  },
+  4: {
+    attendance: 90,
+    overallGrade: "B+",
+    subjects: {
+      physics: { grade: "B", progress: 85, experiments: 12 },
+      chemistry: { grade: "A-", progress: 89, experiments: 13 },
+      biology: { grade: "A", progress: 92, experiments: 14 }
+    },
+    recentActivity: [
+      { date: "2024-02-04", experiment: "Newton's Laws", score: 84 },
+      { date: "2024-02-09", experiment: "Electrochemistry", score: 88 },
+      { date: "2024-02-14", experiment: "Plant Tissues", score: 91 }
+    ]
+  },
+  5: {
+    attendance: 93,
+    overallGrade: "A",
+    subjects: {
+      physics: { grade: "A-", progress: 90, experiments: 13 },
+      chemistry: { grade: "A", progress: 91, experiments: 12 },
+      biology: { grade: "A", progress: 93, experiments: 14 }
+    },
+    recentActivity: [
+      { date: "2024-02-02", experiment: "Circuit Analysis", score: 89 },
+      { date: "2024-02-06", experiment: "Chemical Equilibrium", score: 92 },
+      { date: "2024-02-11", experiment: "Microscopy", score: 90 }
+    ]
+  },
+  6: {
+    attendance: 94,
+    overallGrade: "A",
+    subjects: {
+      physics: { grade: "A", progress: 91, experiments: 14 },
+      chemistry: { grade: "A-", progress: 89, experiments: 13 },
+      biology: { grade: "A+", progress: 95, experiments: 15 }
+    },
+    recentActivity: [
+      { date: "2024-02-05", experiment: "Wave Properties", score: 92 },
+      { date: "2024-02-10", experiment: "Reaction Rates", score: 87 },
+      { date: "2024-02-15", experiment: "Enzyme Activity", score: 94 }
+    ]
+  },
+  7: {
+    attendance: 96,
+    overallGrade: "A",
+    subjects: {
+      physics: { grade: "A", progress: 93, experiments: 15 },
+      chemistry: { grade: "A", progress: 94, experiments: 14 },
+      biology: { grade: "A-", progress: 91, experiments: 13 }
+    },
+    recentActivity: [
+      { date: "2024-02-01", experiment: "Projectile Motion", score: 93 },
+      { date: "2024-02-06", experiment: "Titration", score: 95 },
+      { date: "2024-02-11", experiment: "Cell Division", score: 90 }
+    ]
+  },
+  8: {
+    attendance: 90,
+    overallGrade: "B+",
+    subjects: {
+      physics: { grade: "B+", progress: 87, experiments: 12 },
+      chemistry: { grade: "A-", progress: 88, experiments: 13 },
+      biology: { grade: "A", progress: 92, experiments: 14 }
+    },
+    recentActivity: [
+      { date: "2024-02-03", experiment: "Work and Energy", score: 86 },
+      { date: "2024-02-08", experiment: "Gas Laws", score: 89 },
+      { date: "2024-02-13", experiment: "Osmosis", score: 93 }
+    ]
+  },
+  9: {
+    attendance: 97,
+    overallGrade: "A+",
+    subjects: {
+      physics: { grade: "A+", progress: 98, experiments: 16 },
+      chemistry: { grade: "A", progress: 95, experiments: 15 },
+      biology: { grade: "A+", progress: 97, experiments: 15 }
+    },
+    recentActivity: [
+      { date: "2024-02-02", experiment: "Optics", score: 99 },
+      { date: "2024-02-07", experiment: "Organic Chemistry", score: 94 },
+      { date: "2024-02-12", experiment: "Genetics", score: 96 }
+    ]
+  },
+  10: {
+    attendance: 91,
+    overallGrade: "A-",
+    subjects: {
+      physics: { grade: "B+", progress: 86, experiments: 13 },
+      chemistry: { grade: "A", progress: 90, experiments: 14 },
+      biology: { grade: "A-", progress: 89, experiments: 13 }
+    },
+    recentActivity: [
+      { date: "2024-02-04", experiment: "Thermodynamics", score: 85 },
+      { date: "2024-02-09", experiment: "Solutions", score: 91 },
+      { date: "2024-02-14", experiment: "Photosynthesis", score: 88 }
+    ]
+  },
+  11: {
+    attendance: 94,
+    overallGrade: "A",
+    subjects: {
+      physics: { grade: "A", progress: 92, experiments: 14 },
+      chemistry: { grade: "A-", progress: 89, experiments: 13 },
+      biology: { grade: "A", progress: 91, experiments: 14 }
+    },
+    recentActivity: [
+      { date: "2024-02-03", experiment: "Momentum", score: 93 },
+      { date: "2024-02-08", experiment: "Electrochemistry", score: 88 },
+      { date: "2024-02-13", experiment: "Respiration", score: 90 }
+    ]
+  },
+  12: {
+    attendance: 93,
+    overallGrade: "A",
+    subjects: {
+      physics: { grade: "A-", progress: 89, experiments: 13 },
+      chemistry: { grade: "A", progress: 93, experiments: 14 },
+      biology: { grade: "A", progress: 92, experiments: 14 }
+    },
+    recentActivity: [
+      { date: "2024-02-05", experiment: "Nuclear Physics", score: 87 },
+      { date: "2024-02-10", experiment: "Acids and Bases", score: 92 },
+      { date: "2024-02-15", experiment: "Ecology", score: 91 }
+    ]
+  },
+  13: {
+    attendance: 95,
+    overallGrade: "A",
+    subjects: {
+      physics: { grade: "A", progress: 94, experiments: 15 },
+      chemistry: { grade: "A", progress: 92, experiments: 14 },
+      biology: { grade: "A+", progress: 97, experiments: 16 }
+    },
+    recentActivity: [
+      { date: "2024-02-01", experiment: "Fluid Dynamics", score: 95 },
+      { date: "2024-02-06", experiment: "Organic Synthesis", score: 93 },
+      { date: "2024-02-11", experiment: "Biotechnology", score: 98 }
+    ]
+  },
+  14: {
+    attendance: 92,
+    overallGrade: "A-",
+    subjects: {
+      physics: { grade: "B+", progress: 87, experiments: 13 },
+      chemistry: { grade: "A-", progress: 89, experiments: 14 },
+      biology: { grade: "A", progress: 93, experiments: 15 }
+    },
+    recentActivity: [
+      { date: "2024-02-03", experiment: "Wave Mechanics", score: 86 },
+      { date: "2024-02-08", experiment: "Thermochemistry", score: 88 },
+      { date: "2024-02-13", experiment: "Physiology", score: 94 }
+    ]
+  },
+  15: {
+    attendance: 98,
+    overallGrade: "A+",
+    subjects: {
+      physics: { grade: "A+", progress: 98, experiments: 16 },
+      chemistry: { grade: "A+", progress: 97, experiments: 15 },
+      biology: { grade: "A", progress: 94, experiments: 14 }
+    },
+    recentActivity: [
+      { date: "2024-02-02", experiment: "Quantum Mechanics", score: 99 },
+      { date: "2024-02-07", experiment: "Analytical Chemistry", score: 96 },
+      { date: "2024-02-12", experiment: "Microbiology", score: 93 }
+    ]
+  },
+  16: {
+    attendance: 90,
+    overallGrade: "B+",
+    subjects: {
+      physics: { grade: "B", progress: 84, experiments: 12 },
+      chemistry: { grade: "A-", progress: 88, experiments: 13 },
+      biology: { grade: "A", progress: 92, experiments: 14 }
+    },
+    recentActivity: [
+      { date: "2024-02-04", experiment: "Electrostatics", score: 83 },
+      { date: "2024-02-09", experiment: "Periodic Trends", score: 87 },
+      { date: "2024-02-14", experiment: "Genetics", score: 91 }
+    ]
+  },
+  17: {
+    attendance: 96,
+    overallGrade: "A",
+    subjects: {
+      physics: { grade: "A", progress: 93, experiments: 15 },
+      chemistry: { grade: "A-", progress: 90, experiments: 14 },
+      biology: { grade: "A", progress: 91, experiments: 14 }
+    },
+    recentActivity: [
+      { date: "2024-02-02", experiment: "Magnetism", score: 92 },
+      { date: "2024-02-07", experiment: "Chemical Kinetics", score: 89 },
+      { date: "2024-02-12", experiment: "Evolution", score: 90 }
+    ]
+  },
+  18: {
+    attendance: 93,
+    overallGrade: "A",
+    subjects: {
+      physics: { grade: "A-", progress: 89, experiments: 13 },
+      chemistry: { grade: "A", progress: 91, experiments: 14 },
+      biology: { grade: "A+", progress: 95, experiments: 15 }
+    },
+    recentActivity: [
+      { date: "2024-02-05", experiment: "Relativity", score: 88 },
+      { date: "2024-02-10", experiment: "Coordination Compounds", score: 90 },
+      { date: "2024-02-15", experiment: "Human Physiology", score: 94 }
+    ]
+  },
+  19: {
+    attendance: 97,
+    overallGrade: "A+",
+    subjects: {
+      physics: { grade: "A+", progress: 97, experiments: 16 },
+      chemistry: { grade: "A", progress: 94, experiments: 15 },
+      biology: { grade: "A+", progress: 98, experiments: 16 }
+    },
+    recentActivity: [
+      { date: "2024-02-01", experiment: "Advanced Mechanics", score: 96 },
+      { date: "2024-02-06", experiment: "Spectroscopy", score: 93 },
+      { date: "2024-02-11", experiment: "Immunology", score: 97 }
+    ]
+  },
+  20: {
+    attendance: 91,
+    overallGrade: "A-",
+    subjects: {
+      physics: { grade: "B+", progress: 87, experiments: 13 },
+      chemistry: { grade: "A-", progress: 89, experiments: 14 },
+      biology: { grade: "A", progress: 92, experiments: 15 }
+    },
+    recentActivity: [
+      { date: "2024-02-03", experiment: "Acoustics", score: 86 },
+      { date: "2024-02-08", experiment: "Chromatography", score: 88 },
+      { date: "2024-02-13", experiment: "Ecology", score: 91 }
+    ]
+  },
+  21: {
+    attendance: 96,
+    overallGrade: "A",
+    subjects: {
+      physics: { grade: "A", progress: 93, experiments: 15 },
+      chemistry: { grade: "A", progress: 94, experiments: 15 },
+      biology: { grade: "A-", progress: 90, experiments: 14 }
+    },
+    recentActivity: [
+      { date: "2024-02-02", experiment: "Nuclear Physics", score: 92 },
+      { date: "2024-02-07", experiment: "Polymer Chemistry", score: 95 },
+      { date: "2024-02-12", experiment: "Genetics", score: 89 }
+    ]
+  },
+  22: {
+    attendance: 94,
+    overallGrade: "A",
+    subjects: {
+      physics: { grade: "A-", progress: 90, experiments: 14 },
+      chemistry: { grade: "A", progress: 92, experiments: 14 },
+      biology: { grade: "A", progress: 91, experiments: 14 }
+    },
+    recentActivity: [
+      { date: "2024-02-04", experiment: "Quantum Physics", score: 89 },
+      { date: "2024-02-09", experiment: "Biochemistry", score: 93 },
+      { date: "2024-02-14", experiment: "Cell Biology", score: 90 }
+    ]
+  },
+  23: {
+    attendance: 98,
+    overallGrade: "A+",
+    subjects: {
+      physics: { grade: "A+", progress: 98, experiments: 16 },
+      chemistry: { grade: "A+", progress: 97, experiments: 15 },
+      biology: { grade: "A+", progress: 99, experiments: 16 }
+    },
+    recentActivity: [
+      { date: "2024-02-03", experiment: "Astrophysics", score: 99 },
+      { date: "2024-02-08", experiment: "Advanced Organic Chemistry", score: 98 },
+      { date: "2024-02-13", experiment: "Neurobiology", score: 100 }
+    ]
+  },
+  24: {
+    attendance: 93,
+    overallGrade: "A",
+    subjects: {
+      physics: { grade: "A", progress: 91, experiments: 14 },
+      chemistry: { grade: "A-", progress: 89, experiments: 13 },
+      biology: { grade: "A", progress: 92, experiments: 14 }
+    },
+    recentActivity: [
+      { date: "2024-02-05", experiment: "Thermodynamics", score: 90 },
+      { date: "2024-02-10", experiment: "Analytical Chemistry", score: 88 },
+      { date: "2024-02-15", experiment: "Molecular Biology", score: 93 }
     ]
   },
 };
@@ -147,7 +485,7 @@ const Admin = () => {
       pdf.setFillColor(hexToRgb(color).r, hexToRgb(color).g, hexToRgb(color).b);
       if (radius > 0) {
         // Draw rounded rectangle
-        pdf.roundedRect(x, y, w, h, radius, radius, 'F');
+        pdf.roundedRect(x, y, w, h, Number(radius), Number(radius), 'F');
       } else {
         pdf.rect(x, y, w, h, 'F');
       }
@@ -338,7 +676,7 @@ const Admin = () => {
     yPos += 10;
     
     // Chart container
-    drawRect(10, yPos, pageWidth - 20, 60, colors.lightBg, 3);
+    drawRect(10, yPos, pageWidth - 20, 60, colors.lightBg, Number(3));
     
     // Manually create a simple chart visualization
     const chartData = studentData.slice(-6);
@@ -439,7 +777,7 @@ const Admin = () => {
       if (activity.score < 85) scoreColor = colors.warning;
       if (activity.score < 70) scoreColor = colors.danger;
       
-      drawRect(pageWidth - 35, yPos + 1, 20, rowHeight - 2, scoreColor, 3);
+      drawRect(pageWidth - 35, yPos + 1, 20, rowHeight - 2, scoreColor, Number(3));
       pdf.setTextColor(255, 255, 255);
       pdf.text(`${activity.score}%`, pageWidth - 25, yPos + 7, { align: 'center' });
       
@@ -460,7 +798,7 @@ const Admin = () => {
     yPos += 10;
     
     // Recommendations box
-    drawRect(10, yPos, pageWidth - 20, 40, colors.lightBg, 3);
+    drawRect(10, yPos, pageWidth - 20, 40, colors.lightBg, Number(3));
     
     setTextStyle(fonts.normal);
     pdf.setTextColor(hexToRgb(colors.text).r, hexToRgb(colors.text).g, hexToRgb(colors.text).b);
